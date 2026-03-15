@@ -33,6 +33,15 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# prisma
+/prisma/migrations
+!.prisma/migrations/migration_lock.toml
+
+# database
+*.db
+*.sqlite
+*.sqlite3
+
 # vercel
 .vercel
 
