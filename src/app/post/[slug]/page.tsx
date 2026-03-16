@@ -179,7 +179,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                           {comment.replies.map((reply: any) => (
                             <div key={reply.id} className="flex gap-3 pl-8 border-l-2 border-border">
                               {reply.author.image && (
-                                <div className="relative w-6 h-6 flex-shrink-0">
+                                <div className="relative w-6 h-6 shrink-0">
                                   <Image
                                     src={reply.author.image}
                                     alt={reply.author.name}
