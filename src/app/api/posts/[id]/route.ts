@@ -5,12 +5,13 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const post = await prisma.post.findUnique({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         status: 'PUBLISHED'
       },
       include: {
@@ -87,7 +88,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -99,8 +100,10 @@ export async function PUT(
       )
     }
 
+    const resolvedParams = await params
+
     const post = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!post) {
@@ -120,7 +123,7 @@ export async function PUT(
     const { title, slug, content, excerpt, coverImage, categoryId, tags, status, seoTitle, seoDescription, ogImage } = await request.json()
 
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         title,
         slug,
@@ -171,7 +174,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -183,8 +186,10 @@ export async function DELETE(
       )
     }
 
+    const resolvedParams = await params
+
     const post = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!post) {
@@ -202,7 +207,7 @@ export async function DELETE(
     }
 
     await prisma.post.delete({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     return NextResponse.json({ message: 'Post deleted successfully' })

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,7 +17,27 @@ export default function NewPostPage() {
   const [categoryId, setCategoryId] = useState('')
   const [status, setStatus] = useState('DRAFT')
   const [isLoading, setIsLoading] = useState(false)
+  const [categories, setCategories] = useState<any[]>([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
   const router = useRouter()
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories')
+        if (response.ok) {
+          const data = await response.json()
+          setCategories(data)
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error)
+      } finally {
+        setCategoriesLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
 
   const generateSlug = (title: string) => {
     return title
@@ -144,14 +164,16 @@ export default function NewPostPage() {
 
               <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
-                <Select value={categoryId} onValueChange={setCategoryId} disabled={isLoading}>
+                <Select value={categoryId} onValueChange={setCategoryId} disabled={isLoading || categoriesLoading}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder={categoriesLoading ? 'Loading categories...' : 'Select a category'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Technology</SelectItem>
-                    <SelectItem value="2">Web Development</SelectItem>
-                    <SelectItem value="3">Artificial Intelligence</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
