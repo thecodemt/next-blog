@@ -9,9 +9,11 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params
+    console.log('Looking for post with slug:', resolvedParams.id)
+    
     const post = await prisma.post.findUnique({
       where: {
-        id: resolvedParams.id,
+        slug: resolvedParams.id,  // 改为使用 slug 查询
         status: 'PUBLISHED'
       },
       include: {
@@ -69,9 +71,79 @@ export async function GET(
       }
     })
 
+    console.log('Found post:', post ? 'YES' : 'NO')
+    
     if (!post) {
+      // 如果用 slug 没找到，尝试用 id 查找
+      console.log('Trying to find by id instead...')
+      const postById = await prisma.post.findUnique({
+        where: {
+          id: resolvedParams.id,
+          status: 'PUBLISHED'
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              bio: true,
+            }
+          },
+          category: true,
+          tags: {
+            include: {
+              tag: true
+            }
+          },
+          comments: {
+            where: {
+              parentId: null
+            },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                }
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    }
+                  }
+                },
+                orderBy: {
+                  createdAt: 'asc'
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          },
+          _count: {
+            select: {
+              likes: true,
+              comments: true
+            }
+          }
+        }
+      })
+      
+      console.log('Found post by id:', postById ? 'YES' : 'NO')
+      
+      if (postById) {
+        return NextResponse.json(postById)
+      }
+      
       return NextResponse.json(
-        { error: 'Post not found' },
+        { error: 'Post not found', slug: resolvedParams.id },
         { status: 404 }
       )
     }

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User, Heart, MessageCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { AuthHeader } from '@/components/auth-header'
 
 async function getPost(slug: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts/${slug}`, {
@@ -17,8 +18,9 @@ async function getPost(slug: string) {
   return res.json()
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params
+  const post = await getPost(resolvedParams.slug)
 
   if (!post) {
     notFound()
@@ -33,14 +35,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Link>
-            <nav className="flex items-center space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </nav>
+            <AuthHeader />
           </div>
         </div>
       </header>
@@ -119,7 +114,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </div>
           )}
 
-          <div className="prose prose-gray dark:prose-invert max-w-none mb-8">
+          <div className="prose mb-8">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
 
