@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Calendar, Clock, User, Heart, MessageCircle, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card'
+import { AuthHeader } from '@/components/auth-header'
 
 async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
@@ -40,14 +41,7 @@ export default async function Home() {
             <div className="flex items-center space-x-4">
               <h1 className="text-3xl font-bold">Modern Blog</h1>
             </div>
-            <nav className="flex items-center space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </nav>
+            <AuthHeader />
           </div>
         </div>
       </header>
