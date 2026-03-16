@@ -5,6 +5,7 @@ import { Calendar, Clock, User, Heart, MessageCircle, ArrowLeft } from 'lucide-r
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AuthHeader } from '@/components/auth-header'
+import { MarkdownContent } from '@/components/markdown-content'
 
 async function getPost(slug: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts/${slug}`, {
@@ -114,9 +115,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </div>
           )}
 
-          <div className="prose mb-8">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          </div>
+          <MarkdownContent content={post.content} />
 
           {post.tags.length > 0 && (
             <div className="mb-8">
