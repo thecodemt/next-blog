@@ -1,108 +1,63 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+// app/page.tsx
 import { HeroSection } from '@/components/hero-section'
 import { FeaturedPosts } from '@/components/featured-posts'
 import { RecentPosts } from '@/components/recent-posts'
 
-async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
-    cache: 'no-store'
-  })
+// 服务端获取数据，减少客户端 JS 体积
+async function getHomeData() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   
-  if (!res.ok) {
-    throw new Error('Failed to fetch posts')
+  // 并行请求提高速度
+  const [postsRes, catsRes] = await Promise.all([
+    fetch(`${baseUrl}/api/posts`, { next: { revalidate: 3600 } }),
+    fetch(`${baseUrl}/api/categories`, { next: { revalidate: 3600 } })
+  ])
+
+  if (!postsRes.ok || !catsRes.ok) return { posts: [], categories: [] }
+  
+  return {
+    posts: await postsRes.json(),
+    categories: await catsRes.json()
   }
-  
-  return res.json()
 }
 
-async function getCategories() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/categories`, {
-    cache: 'no-store'
-  })
+export default async function Home() {
+  const { posts, categories } = await getHomeData()
   
-  if (!res.ok) {
-    throw new Error('Failed to fetch categories')
-  }
-  
-  return res.json()
-}
-
-export default function Home() {
-  const [posts, setPosts] = useState<any[]>([])
-  const [categories, setCategories] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [postsData, categoriesData] = await Promise.all([
-          getPosts(),
-          getCategories()
-        ])
-        setPosts(postsData)
-        setCategories(categoriesData)
-      } catch (error) {
-        console.error('Error loading data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    loadData()
-  }, [])
-
   const featuredPosts = posts.slice(0, 3)
   const recentPosts = posts.slice(3, 10)
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50">
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center py-32">
-            <div className="relative inline-block">
-              <div className="w-24 h-24 bg-primary/20 rounded-full animate-ping absolute inset-0 opacity-20"></div>
-              <div className="w-24 h-24 bg-primary/40 rounded-full animate-pulse relative flex items-center justify-center">
-                <div className="w-12 h-12 bg-primary rounded-full animate-bounce"></div>
-              </div>
-            </div>
-            <div className="mt-8 space-y-4">
-              <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded-lg w-64 mx-auto animate-pulse"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-96 mx-auto animate-pulse"></div>
-            </div>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-background relative selection:bg-primary/20">
-      {/* Dynamic Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 left-[20%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-0 right-[20%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      </div>
+    <div className="min-h-screen bg-white dark:bg-black">
+      <div className="fixed inset-0 -z-10 bg-[url('/grid.svg')] opacity-[0.02] dark:opacity-[0.03]" />
 
-      <main className="relative">
-        {/* 1. Hero Section */}
-        <div className="relative pt-10 pb-16 overflow-hidden">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section - 紧凑设计 */}
+        <section className="py-12 md:py-16">
           <HeroSection />
-        </div>
-
-        {/* 2. Featured Posts */}
-        <section className="relative z-10 bg-slate-50/30 dark:bg-slate-900/30 backdrop-blur-sm py-20 border-y border-slate-200/50 dark:border-slate-800/50">
-          <FeaturedPosts posts={featuredPosts} />
         </section>
 
-        {/* 3. Recent Posts & Categories */}
-        <div className="container mx-auto px-4 py-20">
-          <RecentPosts posts={recentPosts} categories={categories} />
+        {/* 内容区域 - 统一布局 */}
+        <div className="space-y-16 md:space-y-20 py-8">
+          {/* Featured Posts */}
+          <section>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-sm font-medium text-slate-900 dark:text-white">精选文章</h2>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Featured</span>
+            </div>
+            <FeaturedPosts posts={featuredPosts} />
+          </section>
+
+          {/* Recent Posts */}
+          <section>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-sm font-medium text-slate-900 dark:text-white">最新发布</h2>
+              <span className="text-xs text-slate-500 dark:text-slate-400">Recent</span>
+            </div>
+            <RecentPosts posts={recentPosts} categories={categories} />
+          </section>
         </div>
       </main>
     </div>
   )
 }
-

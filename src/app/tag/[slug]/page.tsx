@@ -1,6 +1,3 @@
-'use client'
-
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Calendar, Clock, ArrowLeft, Hash } from 'lucide-react'
@@ -8,6 +5,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/date'
+import { getRandomImageForPost } from '@/lib/image-urls'
+import { BackToTopButton } from '@/components/back-to-top-button'
 
 async function getTag(slug: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/tags/${slug}`, {
@@ -95,21 +94,19 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
         {/* Posts Grid */}
         {posts.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post: any) => (
+            {posts.map((post: any, index: number) => (
               <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group">
                 <Card className="overflow-hidden border-border/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card/50 backdrop-blur-sm">
                   {/* Cover Image */}
-                  {post.coverImage && (
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <Image
-                        src={post.coverImage}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                  )}
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={getRandomImageForPost(post.id, index)}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
 
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
@@ -171,13 +168,7 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
         )}
 
         {/* Back to Top */}
-        {posts.length > 0 && (
-          <div className="text-center mt-12">
-            <Button variant="outline" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              返回顶部
-            </Button>
-          </div>
-        )}
+        <BackToTopButton />
       </main>
     </div>
   )

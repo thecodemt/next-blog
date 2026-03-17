@@ -84,9 +84,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-10">
           <main className="xl:col-span-8 space-y-6">
-            <article className="glass-morphism rounded-[2rem] overflow-hidden shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
+            <article className="glass-morphism rounded-4xl overflow-hidden shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
               <header className="relative p-6 md:p-10 lg:p-12">
-                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-secondary/10 opacity-30 rounded-t-[2rem]" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-secondary/10 opacity-30 rounded-t-4xl" />
                 
                 <div className="relative z-10 space-y-6">
                   <div className="flex flex-wrap items-center gap-3">
@@ -167,7 +167,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </header>
 
               {post.coverImage && (
-                <div className="relative h-[18rem] md:h-[22rem] lg:h-[26rem] w-full overflow-hidden group px-6 md:px-10 lg:px-12 pb-6 md:pb-10 lg:pb-12">
+                <div className="relative w-full h-72 md:h-88 lg:h-104 overflow-hidden rounded-t-4xl">
                   <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-xl">
                     <Image
                       src={post.coverImage}
@@ -184,7 +184,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               <div className="px-6 md:px-10 lg:px-12 pb-10 lg:pb-12">
                 <MarkdownContent 
                   content={post.content} 
-                  className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-headings:font-black prose-p:leading-relaxed prose-pre:bg-slate-950 prose-pre:border prose-pre:border-white/10" 
                 />
 
                 {post.tags.length > 0 && (
@@ -215,22 +214,22 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </div>
 
             {/* 评论区 */}
-            <div className="glass-morphism rounded-[2rem] p-6 md:p-10 shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
+            <div className="glass-morphism rounded-4xl p-6 md:p-10 shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-lg md:text-xl font-black flex items-center gap-2.5">
-                  <MessageCircle className="w-6 h-6 text-primary" />
+                  <MessageCircle className="w-5 h-5 text-primary" />
                   全部评论
                   <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                     {post._count.comments}
                   </span>
                 </h3>
-                <Button variant="outline" size="sm" className="h-8 rounded-full font-bold text-xs">
+                <Button variant="outline" size="sm" className="h-9 rounded-full font-bold text-xs">
                   发表评论
                 </Button>
               </div>
               
               {post.comments.length === 0 ? (
-                <div className="text-center py-12 bg-muted/20 rounded-2xl border-2 border-dashed border-border/50">
+                <div className="w-full rounded-3xl bg-muted/50 p-4">
                   <MessageCircle className="w-10 h-10 mx-auto mb-3 text-muted-foreground/20" />
                   <p className="text-muted-foreground text-sm font-bold">暂无评论</p>
                 </div>
@@ -240,7 +239,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     <div key={comment.id} className="p-5 md:p-6 bg-muted/10 rounded-2xl border border-border/20 hover:bg-muted/20 transition-colors">
                       <div className="flex items-start gap-4">
                         {comment.author.image && (
-                          <div className="relative w-9 h-9 md:w-10 h-10 shrink-0">
+                          <div className="relative w-10 h-10 shrink-0">
                             <Image
                               src={comment.author.image}
                               alt={comment.author.name}
@@ -272,7 +271,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               <TableOfContents content={post.content} />
               
               {/* Author Card in Sidebar */}
-              <Card className="rounded-[1.5rem] overflow-hidden border-border/50 shadow-xl bg-card/30 backdrop-blur-md">
+              <Card className="rounded-3xl overflow-hidden border-border/50 shadow-xl bg-card/30 backdrop-blur-md">
                 <div className="h-20 bg-linear-to-br from-primary/20 to-secondary/20" />
                 <CardContent className="relative pt-0 px-5 pb-6">
                   <div className="flex flex-col items-center -mt-10 text-center space-y-3">
