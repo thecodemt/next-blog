@@ -28,79 +28,81 @@ export function FeaturedPosts({ posts }: FeaturedPostsProps) {
   if (!posts.length) return null
 
   return (
-    <section className="py-12">
+    <section className="py-4">
       <div className="container mx-auto px-4">
-        <div className="flex items-center gap-3 mb-8">
-          <TrendingUp className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold">精选文章</h2>
-          <Badge variant="secondary" className="text-sm">
-            深度长文
-          </Badge>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-primary font-bold tracking-wider uppercase text-sm">
+              <TrendingUp className="w-4 h-4" />
+              <span>Trending Now</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight">精选文章</h2>
+          </div>
+          <p className="text-muted-foreground max-w-md">
+            探索深度技术解析与实战经验分享，助你构建更好的数字产品。
+          </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, index) => (
-            <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group">
-              <Card className="overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-linear-to-br from-white/90 via-white/70 to-white/50 backdrop-blur-md group">
+            <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group block">
+              <Card className="h-full flex flex-col overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 bg-card/50 backdrop-blur-sm relative">
                 {/* Cover Image */}
                 {post.coverImage && (
-                  <div className="relative h-48 md:h-56 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden">
                     <Image
                       src={post.coverImage}
                       alt={post.title}
                       fill
-                      className="object-cover transition-all duration-700 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500" />
-                    <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
-                    {index === 0 && (
-                      <div className="absolute top-4 left-4 z-10">
-                        <Badge className="bg-linear-to-r from-primary to-primary/80 text-primary-foreground shadow-lg backdrop-blur-sm border-0">
+                    <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                      {index === 0 && (
+                        <Badge className="bg-primary text-primary-foreground border-0 shadow-lg px-3 py-1">
                           <TrendingUp className="w-3 h-3 mr-1" />
                           置顶
                         </Badge>
-                      </div>
-                    )}
+                      )}
+                      {post.category && (
+                        <Badge variant="secondary" className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-foreground border-0 shadow-sm px-3 py-1">
+                          {post.category.name}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 )}
 
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                    {post.category && (
-                      <>
-                        <Badge variant="secondary" className="text-xs px-2 py-1 bg-primary/10 text-primary border-primary/20">
-                          {post.category.name}
-                        </Badge>
-                        <span className="w-1 h-1 bg-muted-foreground/40 rounded-full" />
-                      </>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
+                <CardHeader className="space-y-4 pt-6">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-primary/70" />
                       {formatDate(post.publishedAt)}
+                    </div>
+                    <span className="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full" />
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-primary/70" />
+                      <span>{post.readTime || 5} min read</span>
                     </div>
                   </div>
                   
-                  <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-tight mb-3">
+                  <h3 className="text-xl md:text-2xl font-bold group-hover:text-primary transition-colors leading-tight line-clamp-2">
                     {post.title}
                   </h3>
                 </CardHeader>
 
-                <CardContent className="pt-0">
+                <CardContent className="flex-grow">
                   {post.excerpt && (
-                    <p className="text-muted-foreground text-sm line-clamp-3 mb-4 leading-relaxed">
-                      {post.excerpt}
+                    <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6 italic">
+                      "{post.excerpt}"
                     </p>
                   )}
                   
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/50">
-                    <div className="flex items-center gap-1">
-                      <BookOpen className="w-3 h-3" />
-                      <span>{post.readTime || 5} 分钟</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{formatDateMinimal(post.publishedAt)}</span>
+                  <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
+                    阅读更多
+                    <div className="w-0 group-hover:w-4 overflow-hidden transition-all duration-300 flex items-center">
+                      <TrendingUp className="w-4 h-4 rotate-90" />
                     </div>
                   </div>
                 </CardContent>
@@ -112,3 +114,4 @@ export function FeaturedPosts({ posts }: FeaturedPostsProps) {
     </section>
   )
 }
+

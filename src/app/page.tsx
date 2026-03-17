@@ -3,10 +3,7 @@
 import { useState, useEffect } from 'react'
 import { HeroSection } from '@/components/hero-section'
 import { FeaturedPosts } from '@/components/featured-posts'
-import { BentoGrid } from '@/components/bento-grid'
-import { CategoryTags } from '@/components/category-tags'
 import { RecentPosts } from '@/components/recent-posts'
-import { NewsletterCTA } from '@/components/newsletter-cta'
 
 async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
@@ -61,13 +58,18 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50">
         <main className="container mx-auto px-4 py-8">
-          <div className="text-center py-20">
-            <div className="animate-pulse">
-              <div className="w-20 h-20 bg-muted rounded-full mx-auto mb-4"></div>
-              <div className="h-8 bg-muted rounded w-64 mx-auto mb-2"></div>
-              <div className="h-4 bg-muted rounded w-96 mx-auto"></div>
+          <div className="text-center py-32">
+            <div className="relative inline-block">
+              <div className="w-24 h-24 bg-primary/20 rounded-full animate-ping absolute inset-0 opacity-20"></div>
+              <div className="w-24 h-24 bg-primary/40 rounded-full animate-pulse relative flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary rounded-full animate-bounce"></div>
+              </div>
+            </div>
+            <div className="mt-8 space-y-4">
+              <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded-lg w-64 mx-auto animate-pulse"></div>
+              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-lg w-96 mx-auto animate-pulse"></div>
             </div>
           </div>
         </main>
@@ -76,29 +78,31 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <main>
+    <div className="min-h-screen bg-background relative selection:bg-primary/20">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-[20%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 right-[20%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+      </div>
+
+      <main className="relative">
         {/* 1. Hero Section */}
-        <HeroSection />
+        <div className="relative pt-10 pb-16 overflow-hidden">
+          <HeroSection />
+        </div>
 
         {/* 2. Featured Posts */}
-        <FeaturedPosts posts={featuredPosts} />
+        <section className="relative z-10 bg-slate-50/30 dark:bg-slate-900/30 backdrop-blur-sm py-20 border-y border-slate-200/50 dark:border-slate-800/50">
+          <FeaturedPosts posts={featuredPosts} />
+        </section>
 
-        {/* 3. Bento Grid Status */}
-        <BentoGrid 
-          postsCount={posts.length} 
-          categoriesCount={categories.length} 
-        />
-
-        {/* 4. Category Tags */}
-        <CategoryTags categories={categories} />
-
-        {/* 5. Recent Posts */}
-        <RecentPosts posts={recentPosts} />
-
-        {/* 6. Newsletter CTA */}
-        <NewsletterCTA />
+        {/* 3. Recent Posts & Categories */}
+        <div className="container mx-auto px-4 py-20">
+          <RecentPosts posts={recentPosts} categories={categories} />
+        </div>
       </main>
     </div>
   )
 }
+
