@@ -5,12 +5,15 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
+    console.log('Looking for post with slug:', resolvedParams.id)
+    
     const post = await prisma.post.findUnique({
       where: {
-        id: params.id,
+        slug: resolvedParams.id,  // 改为使用 slug 查询
         status: 'PUBLISHED'
       },
       include: {
@@ -68,9 +71,79 @@ export async function GET(
       }
     })
 
+    console.log('Found post:', post ? 'YES' : 'NO')
+    
     if (!post) {
+      // 如果用 slug 没找到，尝试用 id 查找
+      console.log('Trying to find by id instead...')
+      const postById = await prisma.post.findUnique({
+        where: {
+          id: resolvedParams.id,
+          status: 'PUBLISHED'
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              bio: true,
+            }
+          },
+          category: true,
+          tags: {
+            include: {
+              tag: true
+            }
+          },
+          comments: {
+            where: {
+              parentId: null
+            },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                }
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    }
+                  }
+                },
+                orderBy: {
+                  createdAt: 'asc'
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          },
+          _count: {
+            select: {
+              likes: true,
+              comments: true
+            }
+          }
+        }
+      })
+      
+      console.log('Found post by id:', postById ? 'YES' : 'NO')
+      
+      if (postById) {
+        return NextResponse.json(postById)
+      }
+      
       return NextResponse.json(
-        { error: 'Post not found' },
+        { error: 'Post not found', slug: resolvedParams.id },
         { status: 404 }
       )
     }
@@ -87,7 +160,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -99,8 +172,10 @@ export async function PUT(
       )
     }
 
+    const resolvedParams = await params
+
     const post = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!post) {
@@ -117,10 +192,10 @@ export async function PUT(
       )
     }
 
-    const { title, slug, content, excerpt, coverImage, categoryId, tags, status, seoTitle, seoDescription, ogImage } = await request.json()
+    const { title, slug, content, excerpt, coverImage, categoryId, tagIds, status, seoTitle, seoDescription, ogImage } = await request.json()
 
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         title,
         slug,
@@ -135,7 +210,7 @@ export async function PUT(
         publishedAt: status === 'PUBLISHED' && !post.publishedAt ? new Date() : post.publishedAt,
         tags: {
           deleteMany: {},
-          create: tags?.map((tagId: string) => ({
+          create: tagIds?.map((tagId: string) => ({
             tag: {
               connect: { id: tagId }
             }
@@ -171,7 +246,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -183,8 +258,10 @@ export async function DELETE(
       )
     }
 
+    const resolvedParams = await params
+
     const post = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!post) {
@@ -202,7 +279,7 @@ export async function DELETE(
     }
 
     await prisma.post.delete({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     return NextResponse.json({ message: 'Post deleted successfully' })

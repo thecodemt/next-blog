@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 import 'dotenv/config';
 
 const adapter = new PrismaPg({
@@ -10,6 +11,22 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
+  // Create admin user
+  const hashedPassword = await bcrypt.hash('admin123', 12);
+  
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@blog.com' },
+    update: {},
+    create: {
+      name: 'Admin',
+      email: 'admin@blog.com',
+      password: hashedPassword,
+      role: 'ADMIN',
+      bio: 'Blog administrator',
+    },
+  })
+
+  console.log('Admin user created:', adminUser.email)
   // Create default categories
   const techCategory = await prisma.category.upsert({
     where: { slug: 'technology' },
