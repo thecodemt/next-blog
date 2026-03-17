@@ -90,15 +90,15 @@ export default function PostsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50">
-        <main className="container mx-auto px-4 py-12">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Skeleton Header */}
           <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
             <div className="h-12 w-64 bg-slate-200 dark:bg-slate-800 rounded-xl mx-auto animate-pulse" />
             <div className="h-6 w-96 bg-slate-200 dark:bg-slate-800 rounded-lg mx-auto animate-pulse" />
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(8)].map((_, i) => (
               <PostCardSkeleton key={i} />
             ))}
           </div>
@@ -115,17 +115,17 @@ export default function PostsPage() {
         <div className="absolute bottom-0 right-[20%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
       </div>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="max-w-4xl mx-auto text-center mb-16 space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold tracking-wide uppercase">
             <Layers className="w-4 h-4" />
             <span>文章归档</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight bg-linear-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight bg-linear-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
             探索所有文章
           </h1>
-          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
             涵盖前端开发、后端架构、UI/UX 设计以及技术趋势的深度探索。
           </p>
         </div>
@@ -140,17 +140,17 @@ export default function PostsPage() {
                 placeholder="搜索文章标题、内容、摘要..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-14 h-14 text-lg bg-background/80 backdrop-blur-md border-slate-200/50 dark:border-slate-800/50 focus:ring-primary/20 focus:border-primary rounded-2xl shadow-xl transition-all"
+                className="pl-14 h-12 text-base bg-background/80 backdrop-blur-md border-slate-200/50 dark:border-slate-800/50 focus:ring-primary/20 focus:border-primary rounded-2xl shadow-xl transition-all"
               />
             </div>
           </div>
           
-          <div className="flex flex-wrap gap-3 justify-center items-center">
+          <div className="flex flex-wrap gap-2 justify-center items-center">
             <Button
               variant={selectedCategory === 'all' ? 'default' : 'outline'}
               onClick={() => setSelectedCategory('all')}
               className={cn(
-                "rounded-full px-6 h-10 transition-all duration-300",
+                "rounded-full px-5 h-9 text-sm transition-all duration-300",
                 selectedCategory === 'all' ? "shadow-lg shadow-primary/25" : "hover:bg-primary/5"
               )}
             >
@@ -162,7 +162,7 @@ export default function PostsPage() {
                 variant={selectedCategory === category.id ? 'default' : 'outline'}
                 onClick={() => setSelectedCategory(category.id)}
                 className={cn(
-                  "rounded-full px-6 h-10 transition-all duration-300 group",
+                  "rounded-full px-5 h-9 text-sm transition-all duration-300 group",
                   selectedCategory === category.id ? "shadow-lg shadow-primary/25" : "hover:bg-primary/5"
                 )}
               >
@@ -170,7 +170,7 @@ export default function PostsPage() {
                 <Badge 
                   variant={selectedCategory === category.id ? 'secondary' : 'outline'} 
                   className={cn(
-                    "ml-2 px-1.5 py-0 min-w-5 flex items-center justify-center text-[10px]",
+                    "ml-2 px-1 py-0 min-w-4 flex items-center justify-center text-[9px]",
                     selectedCategory === category.id ? "bg-white/20 border-0" : "group-hover:bg-primary/10"
                   )}
                 >
@@ -183,12 +183,12 @@ export default function PostsPage() {
 
         {/* Posts Grid */}
         {filteredPosts.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {filteredPosts.map((post: any, index: number) => (
               <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group h-full">
-                <Card className="h-full flex flex-col overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 bg-card/50 backdrop-blur-sm group-hover:-translate-y-2">
+                <Card className="h-full flex flex-col overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 bg-card/50 backdrop-blur-sm group-hover:-translate-y-1">
                   {/* Cover Image */}
-                  <div className="relative h-56 w-full overflow-hidden">
+                  <div className="relative h-44 w-full overflow-hidden">
                     <Image
                       src={getRandomImageForPost(post.id, index)}
                       alt={post.title}
@@ -198,42 +198,42 @@ export default function PostsPage() {
                     <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
                     {post.category && (
-                      <div className="absolute top-4 left-4">
-                        <Badge variant="secondary" className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-foreground border-0 shadow-sm px-3 py-1 font-semibold">
+                      <div className="absolute top-3 left-3">
+                        <Badge variant="secondary" className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[10px] text-foreground border-0 shadow-sm px-2 py-0.5 font-bold">
                           {post.category.name}
                         </Badge>
                       </div>
                     )}
                   </div>
 
-                  <CardHeader className="space-y-3 pt-6">
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-primary/70" />
+                  <CardHeader className="space-y-2 pt-4 px-4 pb-2">
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-primary/70" />
                         {formatDate(post.publishedAt)}
                       </div>
                       <span className="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full" />
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-primary/70" />
-                        <span>{post.readTime || 5} min read</span>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-primary/70" />
+                        <span>{post.readTime || 5} min</span>
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors leading-tight line-clamp-2">
+                    <h3 className="text-base font-bold group-hover:text-primary transition-colors leading-tight line-clamp-2">
                       {post.title}
                     </h3>
                   </CardHeader>
 
-                  <CardContent className="grow flex flex-col justify-between">
+                  <CardContent className="grow flex flex-col justify-between px-4 pb-4 pt-2">
                     {post.excerpt && (
-                      <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6">
+                      <p className="text-muted-foreground text-[13px] line-clamp-2 leading-relaxed mb-4">
                         {post.excerpt}
                       </p>
                     )}
                     
-                    <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
-                      阅读全文
-                      <ArrowRight className="w-4 h-4 ml-1 transition-all" />
+                    <div className="flex items-center text-primary font-bold text-[11px] uppercase tracking-widest group-hover:gap-2 transition-all">
+                      阅读更多
+                      <ArrowRight className="w-3 h-3 ml-1 transition-all" />
                     </div>
                   </CardContent>
                 </Card>
