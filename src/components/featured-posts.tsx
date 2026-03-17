@@ -92,7 +92,7 @@ export function FeaturedPosts({ posts }: FeaturedPostsProps) {
                   </h3>
                 </CardHeader>
 
-                <CardContent className="flex-grow">
+                <CardContent className="grow">
                   {post.excerpt && (
                     <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6 italic">
                       "{post.excerpt}"

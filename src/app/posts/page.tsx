@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/date'
 import { PostCardSkeleton } from '@/components/post-card-skeleton'
+import { getRandomImageForPost } from '@/lib/image-urls'
 
 async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
@@ -169,7 +170,7 @@ export default function PostsPage() {
                 <Badge 
                   variant={selectedCategory === category.id ? 'secondary' : 'outline'} 
                   className={cn(
-                    "ml-2 px-1.5 py-0 min-w-[20px] flex items-center justify-center text-[10px]",
+                    "ml-2 px-1.5 py-0 min-w-5 flex items-center justify-center text-[10px]",
                     selectedCategory === category.id ? "bg-white/20 border-0" : "group-hover:bg-primary/10"
                   )}
                 >
@@ -183,23 +184,17 @@ export default function PostsPage() {
         {/* Posts Grid */}
         {filteredPosts.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {filteredPosts.map((post: any) => (
+            {filteredPosts.map((post: any, index: number) => (
               <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group h-full">
                 <Card className="h-full flex flex-col overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 bg-card/50 backdrop-blur-sm group-hover:-translate-y-2">
                   {/* Cover Image */}
                   <div className="relative h-56 w-full overflow-hidden">
-                    {post.coverImage ? (
-                      <Image
-                        src={post.coverImage}
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
-                        <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-700" />
-                      </div>
-                    )}
+                    <Image
+                      src={getRandomImageForPost(post.id, index)}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                     <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
                     {post.category && (
@@ -229,7 +224,7 @@ export default function PostsPage() {
                     </h3>
                   </CardHeader>
 
-                  <CardContent className="flex-grow flex flex-col justify-between">
+                  <CardContent className="grow flex flex-col justify-between">
                     {post.excerpt && (
                       <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6">
                         {post.excerpt}
