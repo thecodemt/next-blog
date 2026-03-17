@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Clock, User, Heart, MessageCircle, Tag, Filter, X, Calendar, TrendingUp, BookOpen, Sparkles } from 'lucide-react'
+import { Search, Clock, User, Heart, MessageCircle, Tag, Calendar, TrendingUp, BookOpen, Sparkles } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -83,11 +83,6 @@ export default function Home() {
 
     setFilteredPosts(filtered)
   }, [searchTerm, selectedCategory, posts])
-
-  const clearFilters = () => {
-    setSearchTerm('')
-    setSelectedCategory('all')
-  }
 
   const featuredPosts = filteredPosts.slice(0, 3)
   const regularPosts = filteredPosts.slice(3)
@@ -195,21 +190,6 @@ export default function Home() {
               </Button>
             ))}
           </div>
-          
-          {/* Clear Filters */}
-          {(searchTerm || selectedCategory !== 'all') && (
-            <div className="text-center mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Clear filters
-              </Button>
-            </div>
-          )}
         </section>
 
         {/* Featured Posts */}
@@ -244,12 +224,9 @@ export default function Home() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                       {post.category && (
-                        <Link
-                          href={`/category/${post.category.slug}`}
-                          className="hover:text-primary transition-colors"
-                        >
+                        <span className="font-medium">
                           {post.category.name}
-                        </Link>
+                        </span>
                       )}
                       <span>•</span>
                       <time dateTime={post.publishedAt} className="flex items-center gap-1">
@@ -324,12 +301,9 @@ export default function Home() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                       {post.category && (
-                        <Link
-                          href={`/category/${post.category.slug}`}
-                          className="hover:text-primary transition-colors"
-                        >
+                        <span className="font-medium">
                           {post.category.name}
-                        </Link>
+                        </span>
                       )}
                       <span>•</span>
                       <time dateTime={post.publishedAt}>
@@ -404,11 +378,6 @@ export default function Home() {
                   : 'Start by creating your first blog post'
                 }
               </p>
-              {(searchTerm || selectedCategory !== 'all') && (
-                <Button onClick={clearFilters} variant="outline">
-                  Clear filters
-                </Button>
-              )}
             </div>
           </section>
         )}
