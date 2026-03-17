@@ -44,7 +44,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
+    <div className="min-h-screen bg-linear-to-br from-background via-background/95 to-background">
       <ReadingProgress />
 
       <div className="container mx-auto px-4 py-6 lg:py-8">
@@ -52,7 +52,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <main className="xl:col-span-8">
             <article className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-zinc-800 shadow-2xl overflow-hidden">
               <header className="relative p-6 md:p-8 lg:p-12">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-30 rounded-t-3xl" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 opacity-30 rounded-t-3xl" />
                 
                 <div className="relative z-10">
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-8">
@@ -132,7 +132,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                 </div>
               )}
 
