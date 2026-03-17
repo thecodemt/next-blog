@@ -50,7 +50,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       <div className="container mx-auto px-4 py-6 lg:py-8">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
           <main className="xl:col-span-8">
-            <article className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-zinc-800 shadow-2xl overflow-hidden">
+            <article className="glass-morphism rounded-3xl overflow-hidden shadow-2xl">
               <header className="relative p-6 md:p-8 lg:p-12">
                 <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 opacity-30 rounded-t-3xl" />
                 
@@ -72,7 +72,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     </div>
                   </div>
                   
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 leading-tight">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 leading-tight text-gradient">
                     {post.title}
                   </h1>
                   
@@ -165,7 +165,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </article>
 
             {/* 评论区修复闭合 */}
-            <div className="mt-8 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-zinc-800 p-6 md:p-8 shadow-2xl">
+            <div className="mt-8 glass-morphism rounded-3xl p-6 md:p-8 shadow-2xl">
               <h3 className="text-xl font-semibold mb-6 flex items-center gap-3">
                 <MessageCircle className="w-5 h-5 text-primary" />
                 评论 ({post._count.comments})

@@ -106,7 +106,7 @@ export default function PostsPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
             所有文章
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -122,7 +122,7 @@ export default function PostsPage() {
               placeholder="搜索文章标题、内容..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 text-lg bg-card/50 backdrop-blur-sm border-border/50 focus:border-primary"
+              className="pl-12 h-12 text-lg glass-morphism border-border/50 focus:border-primary"
             />
           </div>
           
@@ -157,7 +157,7 @@ export default function PostsPage() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredPosts.map((post: any) => (
               <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group">
-                <Card className="overflow-hidden border-border/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card/50 backdrop-blur-sm">
+                <Card className="overflow-hidden border-border/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 glass-morphism">
                   {/* Cover Image */}
                   {post.coverImage && (
                     <div className="relative h-48 w-full overflow-hidden">
