@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AuthHeader } from '@/components/auth-header'
 import { MarkdownContent } from '@/components/markdown-content'
+import { formatDate } from '@/lib/date'
 
 async function getPost(slug: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts/${slug}`, {
@@ -55,7 +56,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               )}
               <span>•</span>
               <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString()}
+                {formatDate(post.publishedAt)}
               </time>
             </div>
             
@@ -160,7 +161,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                         <div>
                           <p className="font-medium text-sm">{comment.author.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(comment.createdAt).toLocaleDateString()}
+                            {formatDate(comment.createdAt)}
                           </p>
                         </div>
                       </div>
@@ -186,7 +187,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                                 <div className="flex items-center gap-2 mb-1">
                                   <p className="font-medium text-xs">{reply.author.name}</p>
                                   <p className="text-xs text-muted-foreground">
-                                    {new Date(reply.createdAt).toLocaleDateString()}
+                                    {formatDate(reply.createdAt)}
                                   </p>
                                 </div>
                                 <p className="text-xs">{reply.content}</p>

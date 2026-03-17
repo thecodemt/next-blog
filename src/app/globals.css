@@ -3,6 +3,8 @@
 /* CSS Variables for Design System */
 @layer base {
   :root {
+    --font-inter: system-ui, sans-serif;
+    --font-jetbrains-mono: 'Courier New', monospace;
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -62,6 +64,7 @@
   }
 
   body {
+    font-family: var(--font-inter);
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
