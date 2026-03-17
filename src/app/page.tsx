@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Clock, User, Heart, MessageCircle, Tag, Filter, X } from 'lucide-react'
+import { Search, Clock, User, Heart, MessageCircle, Tag, Filter, X, Calendar, TrendingUp, BookOpen, Sparkles } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { AuthHeader } from '@/components/auth-header'
 
 async function getPosts() {
@@ -88,33 +89,51 @@ export default function Home() {
     setSelectedCategory('all')
   }
 
+  const featuredPosts = filteredPosts.slice(0, 3)
+  const regularPosts = filteredPosts.slice(3)
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="border-b">
+      <div className="min-h-screen bg-linear-to-br from-background to-muted/20">
+        <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <h1 className="text-3xl font-bold">Modern Blog</h1>
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-8 h-8 text-primary" />
+                  <h1 className="text-2xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                    Modern Blog
+                  </h1>
+                </div>
               </div>
               <AuthHeader />
             </div>
           </div>
         </header>
         <main className="container mx-auto px-4 py-8">
-          <div className="text-center">Loading...</div>
+          <div className="text-center py-12">
+            <div className="animate-pulse">
+              <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <p className="text-muted-foreground">Loading amazing content...</p>
+            </div>
+          </div>
         </main>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen bg-linear-to-br from-background to-muted/20">
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h1 className="text-3xl font-bold">Modern Blog</h1>
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-8 h-8 text-primary" />
+                <h1 className="text-2xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  Modern Blog
+                </h1>
+              </div>
             </div>
             <AuthHeader />
           </div>
@@ -122,59 +141,44 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* 搜索和筛选区域 */}
-        <section className="mb-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            {/* 搜索框 */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        {/* Hero Section */}
+        <section className="mb-12 text-center">
+          <div className="max-w-4xl mx-auto">
+            <Badge variant="secondary" className="mb-4">
+              <TrendingUp className="w-3 h-3 mr-1" />
+              Welcome to our blog
+            </Badge>
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-linear-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              Discover Amazing Stories
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Explore our collection of articles covering technology, design, development, and more. 
+              Stay updated with the latest trends and insights.
+            </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-xl mx-auto relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
-                placeholder="搜索文章标题、内容..."
+                placeholder="Search articles, topics, or keywords..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-12 h-12 text-lg bg-background/50 backdrop-blur-sm border-muted-foreground/20 focus:border-primary"
               />
             </div>
-            
-            {/* 分类筛选 */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-muted-foreground" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-input bg-background text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
-              >
-                <option value="all">所有分类</option>
-                {categories.map((category: any) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name} ({category._count?.posts || 0})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 清除筛选按钮 */}
-            {(searchTerm || selectedCategory !== 'all') && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearFilters}
-                className="flex items-center gap-2"
-              >
-                <X className="w-4 h-4" />
-                清除筛选
-              </Button>
-            )}
           </div>
+        </section>
 
-          {/* 分类标签 */}
-          <div className="flex flex-wrap gap-2">
+        {/* Category Pills */}
+        <section className="mb-8">
+          <div className="flex flex-wrap gap-2 justify-center">
             <Button
               variant={selectedCategory === 'all' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedCategory('all')}
+              className="rounded-full"
             >
-              全部
+              All Posts
             </Button>
             {categories.map((category: any) => (
               <Button
@@ -182,58 +186,136 @@ export default function Home() {
                 variant={selectedCategory === category.id ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCategory(category.id)}
+                className="rounded-full"
               >
                 {category.name}
-                <span className="ml-1 text-xs opacity-70">
-                  ({category._count?.posts || 0})
-                </span>
+                <Badge variant="secondary" className="ml-2 px-2 py-0.5 text-xs">
+                  {category._count?.posts || 0}
+                </Badge>
               </Button>
             ))}
           </div>
+          
+          {/* Clear Filters */}
+          {(searchTerm || selectedCategory !== 'all') && (
+            <div className="text-center mt-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Clear filters
+              </Button>
+            </div>
+          )}
         </section>
 
-        {/* 文章列表 */}
-        <section>
-          {/* 筛选状态和结果统计 */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold">
-                {searchTerm || selectedCategory !== 'all' ? '筛选结果' : '所有文章'}
-              </h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                共找到 {filteredPosts.length} 篇文章
-                {searchTerm && ` · 搜索: "${searchTerm}"`}
-                {selectedCategory !== 'all' && ` · 分类: ${categories.find(c => c.id === selectedCategory)?.name}`}
-              </p>
+        {/* Featured Posts */}
+        {featuredPosts.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <Sparkles className="w-5 h-5 text-primary" />
+              <h3 className="text-2xl font-bold">Featured Posts</h3>
             </div>
-          </div>
-
-          {filteredPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">
-                {searchTerm || selectedCategory !== 'all' 
-                  ? '没有找到匹配的文章' 
-                  : '暂无文章'
-                }
-              </p>
-              {(searchTerm || selectedCategory !== 'all') && (
-                <Button variant="outline" onClick={clearFilters}>
-                  清除筛选条件
-                </Button>
-              )}
-            </div>
-          ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredPosts.map((post: any) => (
-                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              {featuredPosts.map((post: any, index: number) => (
+                <Card key={post.id} className="group overflow-hidden border-muted-foreground/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <CardHeader className="p-0">
                     {post.coverImage && (
-                      <div className="relative h-48 w-full">
+                      <div className="relative h-48 w-full overflow-hidden">
                         <Image
                           src={post.coverImage}
                           alt={post.title}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        {index === 0 && (
+                          <Badge className="absolute top-4 left-4 bg-primary">
+                            Featured
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </CardHeader>
+                  
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                      {post.category && (
+                        <Link
+                          href={`/category/${post.category.slug}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          {post.category.name}
+                        </Link>
+                      )}
+                      <span>•</span>
+                      <time dateTime={post.publishedAt} className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(post.publishedAt).toLocaleDateString()}
+                      </time>
+                    </div>
+                    
+                    <Link href={`/post/${post.slug}`}>
+                      <h3 className="text-xl font-semibold hover:text-primary transition-colors line-clamp-2 group-hover:text-primary">
+                        {post.title}
+                      </h3>
+                    </Link>
+                    
+                    {post.excerpt && (
+                      <CardDescription className="mt-2 line-clamp-2 text-sm">
+                        {post.excerpt}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+                  
+                  <CardFooter className="pt-0">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <User className="w-4 h-4" />
+                          <span>{post.author.name}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageCircle className="w-4 h-4" />
+                          <span>{post._count.comments}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <Clock className="w-4 h-4" />
+                        <span>5 min</span>
+                      </div>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Regular Posts */}
+        {regularPosts.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold">Recent Posts</h3>
+              <Badge variant="secondary">
+                {filteredPosts.length} articles
+              </Badge>
+            </div>
+            
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {regularPosts.map((post: any) => (
+                <Card key={post.id} className="group overflow-hidden border-muted-foreground/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="p-0">
+                    {post.coverImage && (
+                      <div className="relative h-40 w-full overflow-hidden">
+                        <Image
+                          src={post.coverImage}
+                          alt={post.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                     )}
@@ -244,7 +326,7 @@ export default function Home() {
                       {post.category && (
                         <Link
                           href={`/category/${post.category.slug}`}
-                          className="hover:text-primary"
+                          className="hover:text-primary transition-colors"
                         >
                           {post.category.name}
                         </Link>
@@ -256,13 +338,13 @@ export default function Home() {
                     </div>
                     
                     <Link href={`/post/${post.slug}`}>
-                      <h3 className="text-xl font-semibold hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="text-lg font-semibold hover:text-primary transition-colors line-clamp-2">
                         {post.title}
                       </h3>
                     </Link>
                     
                     {post.excerpt && (
-                      <CardDescription className="mt-2 line-clamp-3">
+                      <CardDescription className="mt-2 line-clamp-2 text-sm">
                         {post.excerpt}
                       </CardDescription>
                     )}
@@ -270,24 +352,29 @@ export default function Home() {
                   
                   <CardContent className="pt-0">
                     {post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {post.tags.map((postTag: any) => (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {post.tags.slice(0, 3).map((postTag: any) => (
                           <Link
                             key={postTag.tag.id}
                             href={`/tag/${postTag.tag.slug}`}
-                            className="inline-flex items-center px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-xs hover:bg-secondary/80 transition-colors"
+                            className="inline-flex items-center px-2 py-1 bg-muted text-muted-foreground rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
                           >
                             <Tag className="w-3 h-3 mr-1" />
                             {postTag.tag.name}
                           </Link>
                         ))}
+                        {post.tags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{post.tags.length - 3}
+                          </Badge>
+                        )}
                       </div>
                     )}
                   </CardContent>
                   
                   <CardFooter className="pt-0">
                     <div className="flex items-center justify-between w-full text-sm text-muted-foreground">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
                           <User className="w-4 h-4" />
                           <span>{post.author.name}</span>
@@ -296,22 +383,35 @@ export default function Home() {
                           <MessageCircle className="w-4 h-4" />
                           <span>{post._count.comments}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-4 h-4" />
-                          <span>{post._count.likes}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>5 min read</span>
                       </div>
                     </div>
                   </CardFooter>
                 </Card>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        )}
+
+        {/* Empty State */}
+        {filteredPosts.length === 0 && (
+          <section className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
+              <h3 className="text-xl font-semibold mb-2">No articles found</h3>
+              <p className="text-muted-foreground mb-6">
+                {searchTerm || selectedCategory !== 'all' 
+                  ? 'Try adjusting your search terms or filters' 
+                  : 'Start by creating your first blog post'
+                }
+              </p>
+              {(searchTerm || selectedCategory !== 'all') && (
+                <Button onClick={clearFilters} variant="outline">
+                  Clear filters
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   )

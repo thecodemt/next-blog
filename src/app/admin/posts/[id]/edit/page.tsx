@@ -8,6 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { X } from 'lucide-react'
 
 interface Post {
   id: string
@@ -21,6 +24,12 @@ interface Post {
   seoDescription?: string
   ogImage?: string
   coverImage?: string
+  tags?: Array<{
+    tag: {
+      id: string
+      name: string
+    }
+  }>
 }
 
 interface Category {
@@ -28,47 +37,61 @@ interface Category {
   name: string
 }
 
+interface Tag {
+  id: string
+  name: string
+}
+
 export default function EditPostPage() {
   const [post, setPost] = useState<Post | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
+  const [tags, setTags] = useState<Tag[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [postTagsLoaded, setPostTagsLoaded] = useState(false)
   const router = useRouter()
   const params = useParams()
 
   useEffect(() => {
     if (params.id) {
-      fetchPost()
-      fetchCategories()
+      fetchData()
     }
   }, [params.id])
 
-  const fetchPost = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch(`/api/admin/posts/${params.id}`)
-      if (!response.ok) {
-        throw new Error('Post not found')
+      const [postResponse, categoriesResponse, tagsResponse] = await Promise.all([
+        fetch(`/api/admin/posts/${params.id}`),
+        fetch('/api/categories'),
+        fetch('/api/tags')
+      ])
+
+      if (postResponse.ok) {
+        const postData = await postResponse.json()
+        setPost(postData)
+        // Set selected tags from existing post tags
+        if (postData.tags) {
+          setSelectedTags(postData.tags.map((tagRelation: any) => tagRelation.tag.id))
+        }
+        setPostTagsLoaded(true)
       }
-      const data = await response.json()
-      setPost(data)
+
+      if (categoriesResponse.ok) {
+        const categoriesData = await categoriesResponse.json()
+        setCategories(categoriesData)
+      }
+
+      if (tagsResponse.ok) {
+        const tagsData = await tagsResponse.json()
+        setTags(tagsData)
+      }
     } catch (error) {
-      console.error('Error fetching post:', error)
-      setError('Failed to load post')
+      console.error('Error fetching data:', error)
+      setError('Failed to load data')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/categories')
-      if (response.ok) {
-        const data = await response.json()
-        setCategories(data)
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error)
     }
   }
 
@@ -90,6 +113,18 @@ export default function EditPostPage() {
     }
   }
 
+  const handleTagToggle = (tagId: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
+
+  const handleRemoveTag = (tagId: string) => {
+    setSelectedTags(prev => prev.filter(id => id !== tagId))
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!post) return
@@ -102,7 +137,10 @@ export default function EditPostPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(post),
+        body: JSON.stringify({
+          ...post,
+          tagIds: selectedTags,
+        }),
       })
 
       if (response.ok) {
@@ -271,6 +309,58 @@ export default function EditPostPage() {
                     <SelectItem value="PUBLISHED">Published</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Tags</Label>
+                {!postTagsLoaded || tags.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">
+                    {!postTagsLoaded ? 'Loading tags...' : 'No tags available. Create tags in the admin panel first.'}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {tags.map((tag) => (
+                        <div key={tag.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag.id}`}
+                            checked={selectedTags.includes(tag.id)}
+                            onCheckedChange={() => handleTagToggle(tag.id)}
+                            disabled={isSaving}
+                          />
+                          <Label 
+                            htmlFor={`tag-${tag.id}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {tag.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {selectedTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <span className="text-sm text-muted-foreground">Selected:</span>
+                        {selectedTags.map((tagId) => {
+                          const tag = tags.find(t => t.id === tagId)
+                          return tag ? (
+                            <Badge key={tagId} variant="secondary" className="flex items-center gap-1">
+                              {tag.name}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTag(tagId)}
+                                className="ml-1 hover:text-destructive"
+                                disabled={isSaving}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </Badge>
+                          ) : null
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">

@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { title, slug, content, excerpt, coverImage, categoryId, tags, seoTitle, seoDescription, ogImage } = await request.json()
+    const { title, slug, content, excerpt, coverImage, categoryId, tagIds, status, seoTitle, seoDescription, ogImage } = await request.json()
 
     const post = await prisma.post.create({
       data: {
@@ -67,12 +67,12 @@ export async function POST(request: Request) {
         coverImage,
         authorId: session.user.id,
         categoryId,
-        status: 'DRAFT',
+        status: status || 'DRAFT',
         seoTitle,
         seoDescription,
         ogImage,
         tags: {
-          create: tags?.map((tagId: string) => ({
+          create: tagIds?.map((tagId: string) => ({
             tag: {
               connect: { id: tagId }
             }

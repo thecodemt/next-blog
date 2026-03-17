@@ -192,7 +192,7 @@ export async function PUT(
       )
     }
 
-    const { title, slug, content, excerpt, coverImage, categoryId, tags, status, seoTitle, seoDescription, ogImage } = await request.json()
+    const { title, slug, content, excerpt, coverImage, categoryId, tagIds, status, seoTitle, seoDescription, ogImage } = await request.json()
 
     const updatedPost = await prisma.post.update({
       where: { id: resolvedParams.id },
@@ -210,7 +210,7 @@ export async function PUT(
         publishedAt: status === 'PUBLISHED' && !post.publishedAt ? new Date() : post.publishedAt,
         tags: {
           deleteMany: {},
-          create: tags?.map((tagId: string) => ({
+          create: tagIds?.map((tagId: string) => ({
             tag: {
               connect: { id: tagId }
             }

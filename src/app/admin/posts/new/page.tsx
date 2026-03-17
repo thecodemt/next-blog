@@ -8,6 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { X } from 'lucide-react'
 
 export default function NewPostPage() {
   const [title, setTitle] = useState('')
@@ -19,24 +22,37 @@ export default function NewPostPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
   const [categoriesLoading, setCategoriesLoading] = useState(true)
+  const [tags, setTags] = useState<any[]>([])
+  const [tagsLoading, setTagsLoading] = useState(true)
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const router = useRouter()
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/categories')
-        if (response.ok) {
-          const data = await response.json()
-          setCategories(data)
+        const [categoriesResponse, tagsResponse] = await Promise.all([
+          fetch('/api/categories'),
+          fetch('/api/tags')
+        ])
+        
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json()
+          setCategories(categoriesData)
+        }
+        
+        if (tagsResponse.ok) {
+          const tagsData = await tagsResponse.json()
+          setTags(tagsData)
         }
       } catch (error) {
-        console.error('Error fetching categories:', error)
+        console.error('Error fetching data:', error)
       } finally {
         setCategoriesLoading(false)
+        setTagsLoading(false)
       }
     }
 
-    fetchCategories()
+    fetchData()
   }, [])
 
   const generateSlug = (title: string) => {
@@ -52,6 +68,18 @@ export default function NewPostPage() {
     if (!slug) {
       setSlug(generateSlug(newTitle))
     }
+  }
+
+  const handleTagToggle = (tagId: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
+
+  const handleRemoveTag = (tagId: string) => {
+    setSelectedTags(prev => prev.filter(id => id !== tagId))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -71,6 +99,7 @@ export default function NewPostPage() {
           excerpt,
           categoryId,
           status,
+          tagIds: selectedTags,
         }),
       })
 
@@ -189,6 +218,58 @@ export default function NewPostPage() {
                     <SelectItem value="PUBLISHED">Published</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Tags</Label>
+                {tagsLoading ? (
+                  <div className="text-sm text-muted-foreground">Loading tags...</div>
+                ) : tags.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">No tags available. Create tags in the admin panel first.</div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {tags.map((tag) => (
+                        <div key={tag.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag.id}`}
+                            checked={selectedTags.includes(tag.id)}
+                            onCheckedChange={() => handleTagToggle(tag.id)}
+                            disabled={isLoading}
+                          />
+                          <Label 
+                            htmlFor={`tag-${tag.id}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                          >
+                            {tag.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {selectedTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <span className="text-sm text-muted-foreground">Selected:</span>
+                        {selectedTags.map((tagId) => {
+                          const tag = tags.find(t => t.id === tagId)
+                          return tag ? (
+                            <Badge key={tagId} variant="secondary" className="flex items-center gap-1">
+                              {tag.name}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTag(tagId)}
+                                className="ml-1 hover:text-destructive"
+                                disabled={isLoading}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </Badge>
+                          ) : null
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">

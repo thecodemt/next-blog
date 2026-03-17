@@ -23,6 +23,13 @@ export async function GET(
     const post = await prisma.post.findUnique({
       where: {
         id: resolvedParams.id
+      },
+      include: {
+        tags: {
+          include: {
+            tag: true
+          }
+        }
       }
     })
 
