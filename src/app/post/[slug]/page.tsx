@@ -11,42 +11,195 @@ import { RelatedPosts } from '@/components/related-posts'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
+import { prisma } from '@/lib/prisma'
+
 // 定义接口以增强类型安全
 interface Post {
   id: string;
   slug: string;
   title: string;
-  publishedAt: string;
-  excerpt?: string;
+  publishedAt: Date | string | null;
+  excerpt?: string | null;
   content: string;
-  coverImage?: string;
+  coverImage?: string | null;
   views?: number;
-  author: { name: string; image?: string; bio?: string };
-  category?: { name: string; slug: string };
+  author: { id: string; name: string | null; image?: string | null; bio?: string | null };
+  category?: { id: string; name: string; slug: string } | null;
   tags: { tag: { id: string; name: string; slug: string } }[];
   _count: { comments: number; likes: number };
   comments: any[];
+  readTime?: number;
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/posts/${slug}`, {
-    cache: 'no-store'
-  });
-  
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        slug: slug,
+        status: 'PUBLISHED'
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            bio: true,
+          }
+        },
+        category: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
+        comments: {
+          where: {
+            parentId: null
+          },
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              }
+            },
+            replies: {
+              include: {
+                author: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  }
+                }
+              },
+              orderBy: {
+                createdAt: 'asc'
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      }
+    })
+
+    if (!post) {
+      // 如果用 slug 没找到，尝试用 id 查找
+      const postById = await prisma.post.findUnique({
+        where: {
+          id: slug,
+          status: 'PUBLISHED'
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              bio: true,
+            }
+          },
+          category: true,
+          tags: {
+            include: {
+              tag: true
+            }
+          },
+          comments: {
+            where: {
+              parentId: null
+            },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                }
+              },
+              replies: {
+                include: {
+                  author: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    }
+                  }
+                },
+                orderBy: {
+                  createdAt: 'asc'
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          },
+          _count: {
+            select: {
+              likes: true,
+              comments: true
+            }
+          }
+        }
+      })
+      
+      return postById as unknown as Post | null
+    }
+
+    return post as unknown as Post | null
+  } catch (error) {
+    console.error('Error fetching post:', error)
+    return null
+  }
 }
 
-async function getRelatedPosts(categorySlug?: string, currentPostSlug?: string) {
-  if (!categorySlug) return [];
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/posts`, { cache: 'no-store' });
-  if (!res.ok) return [];
-  const posts = await res.json();
-  return posts
-    .filter((p: any) => p.category?.slug === categorySlug && (p.slug || p.id) !== currentPostSlug)
-    .slice(0, 3);
+async function getRelatedPosts(categoryId?: string, currentPostId?: string) {
+  if (!categoryId) return [];
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        categoryId,
+        id: { not: currentPostId },
+        status: 'PUBLISHED'
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        },
+        category: true,
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      },
+      orderBy: {
+        publishedAt: 'desc'
+      },
+      take: 3
+    })
+    return posts
+  } catch (error) {
+    console.error('Error fetching related posts:', error)
+    return []
+  }
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -57,7 +210,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(post.category?.slug, slug);
+  const relatedPosts = await getRelatedPosts(post.category?.id, post.id);
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background via-background/95 to-background">
@@ -100,9 +253,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     )}
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                       <Calendar className="w-3.5 h-3.5 text-primary/60" />
-                      <time dateTime={post.publishedAt}>
-                        {formatDate(post.publishedAt)}
-                      </time>
+                      {post.publishedAt && (
+                        <time dateTime={new Date(post.publishedAt).toISOString()}>
+                          {formatDate(post.publishedAt)}
+                        </time>
+                      )}
                     </div>
                   </div>
                   
@@ -123,7 +278,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                           <div className="absolute inset-0 bg-primary rounded-full blur opacity-10 group-hover:opacity-20 transition-opacity" />
                           <Image
                             src={post.author.image}
-                            alt={post.author.name}
+                            alt={post.author.name || '作者'}
                             fill
                             className="rounded-full object-cover ring-2 ring-background shadow-md relative z-10"
                           />
@@ -209,9 +364,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </article>
 
             {/* Related Posts Section */}
-            <div className="mt-4">
-              <RelatedPosts posts={relatedPosts} />
-            </div>
+            {relatedPosts.length > 0 && (
+              <div className="mt-4">
+                <RelatedPosts posts={relatedPosts as any} />
+              </div>
+            )}
 
             {/* 评论区 */}
             <div className="glass-morphism rounded-4xl p-6 md:p-10 shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
@@ -279,7 +436,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                       <div className="relative w-20 h-20 ring-4 ring-background rounded-full shadow-xl overflow-hidden">
                         <Image
                           src={post.author.image}
-                          alt={post.author.name}
+                          alt={post.author.name || '作者'}
                           fill
                           className="object-cover"
                         />

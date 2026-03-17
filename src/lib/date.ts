@@ -2,7 +2,8 @@
  * Safe date formatting utilities to prevent hydration errors
  */
 
-export function formatDate(date: string | Date, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(date: string | Date | null | undefined, options?: Intl.DateTimeFormatOptions): string {
+  if (!date) return ''
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
   // Always use zh-CN locale to ensure consistency between server and client
@@ -14,7 +15,8 @@ export function formatDate(date: string | Date, options?: Intl.DateTimeFormatOpt
   })
 }
 
-export function formatDateShort(date: string | Date): string {
+export function formatDateShort(date: string | Date | null | undefined): string {
+  if (!date) return ''
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
   return dateObj.toLocaleDateString('zh-CN', {
@@ -24,7 +26,8 @@ export function formatDateShort(date: string | Date): string {
   })
 }
 
-export function formatDateMinimal(date: string | Date): string {
+export function formatDateMinimal(date: string | Date | null | undefined): string {
+  if (!date) return ''
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
   return dateObj.toLocaleDateString('zh-CN', {

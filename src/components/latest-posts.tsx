@@ -8,10 +8,10 @@ interface Post {
   id: string
   slug: string
   title: string
-  excerpt?: string
-  publishedAt: string
+  excerpt?: string | null
+  publishedAt: string | Date | null
   readTime?: number
-  category?: { name: string; slug: string }
+  category?: { name: string; slug: string } | null
 }
 
 interface LatestPostsProps {
@@ -29,9 +29,9 @@ export function LatestPosts({ posts }: LatestPostsProps) {
 
       <div className="space-y-2">
         {posts.map((post, index) => {
-          const date = new Date(post.publishedAt)
-          const year = date.getFullYear()
-          const month = (date.getMonth() + 1).toString().padStart(2, '0')
+          const date = post.publishedAt ? new Date(post.publishedAt) : null
+          const year = date ? date.getFullYear() : '----'
+          const month = date ? (date.getMonth() + 1).toString().padStart(2, '0') : '--'
 
           return (
             <Link 

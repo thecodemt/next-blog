@@ -7,28 +7,70 @@ import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/date'
 import BackToTop from '@/components/back-to-top'
 
+import { prisma } from '@/lib/prisma'
+
 async function getCategory(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/categories/${slug}`, {
-    cache: 'no-store'
-  })
-  
-  if (!res.ok) {
+  try {
+    const category = await prisma.category.findUnique({
+      where: { slug },
+      include: {
+        _count: {
+          select: {
+            posts: {
+              where: {
+                status: 'PUBLISHED'
+              }
+            }
+          }
+        }
+      }
+    })
+    return category
+  } catch (error) {
+    console.error('Error fetching category:', error)
     return null
   }
-  
-  return res.json()
 }
 
 async function getCategoryPosts(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/categories/${slug}/posts`, {
-    cache: 'no-store'
-  })
-  
-  if (!res.ok) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        category: {
+          slug
+        },
+        status: 'PUBLISHED'
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        },
+        category: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      },
+      orderBy: {
+        publishedAt: 'desc'
+      }
+    })
+    return posts
+  } catch (error) {
+    console.error('Error fetching category posts:', error)
     return []
   }
-  
-  return res.json()
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {

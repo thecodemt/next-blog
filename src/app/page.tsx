@@ -1,15 +1,45 @@
 import { HeroSection } from '@/components/hero-section'
 import { LatestPosts } from '@/components/latest-posts'
 import { TechStack } from '@/components/tech-stack'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
 
-// 服务端获取数据
+// 服务端直接使用 prisma 获取数据
 async function getHomeData() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const res = await fetch(`${baseUrl}/api/posts`, { next: { revalidate: 3600 } })
-  if (!res.ok) return []
-  return res.json()
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        status: 'PUBLISHED'
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        },
+        category: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      },
+      orderBy: {
+        publishedAt: 'desc'
+      }
+    })
+    return posts
+  } catch (error) {
+    console.error('Error fetching home data:', error)
+    return []
+  }
 }
 
 export default async function Home() {

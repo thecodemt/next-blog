@@ -14,7 +14,7 @@ import { PostCardSkeleton } from '@/components/post-card-skeleton'
 import { getRandomImageForPost } from '@/lib/image-urls'
 
 async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
+  const res = await fetch('/api/posts', {
     cache: 'no-store'
   })
   
@@ -26,7 +26,7 @@ async function getPosts() {
 }
 
 async function getCategories() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/categories`, {
+  const res = await fetch('/api/categories', {
     cache: 'no-store'
   })
   

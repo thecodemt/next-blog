@@ -8,28 +8,76 @@ import { formatDate } from '@/lib/date'
 import { getRandomImageForPost } from '@/lib/image-urls'
 import { BackToTopButton } from '@/components/back-to-top-button'
 
+import { prisma } from '@/lib/prisma'
+
 async function getTag(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/tags/${slug}`, {
-    cache: 'no-store'
-  })
-  
-  if (!res.ok) {
+  try {
+    const tag = await prisma.tag.findUnique({
+      where: { slug },
+      include: {
+        _count: {
+          select: {
+            posts: {
+              where: {
+                post: {
+                  status: 'PUBLISHED'
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    return tag
+  } catch (error) {
+    console.error('Error fetching tag:', error)
     return null
   }
-  
-  return res.json()
 }
 
 async function getTagPosts(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/tags/${slug}/posts`, {
-    cache: 'no-store'
-  })
-  
-  if (!res.ok) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        tags: {
+          some: {
+            tag: {
+              slug
+            }
+          }
+        },
+        status: 'PUBLISHED'
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        },
+        category: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        }
+      },
+      orderBy: {
+        publishedAt: 'desc'
+      }
+    })
+    return posts
+  } catch (error) {
+    console.error('Error fetching tag posts:', error)
     return []
   }
-  
-  return res.json()
 }
 
 export default async function TagPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -83,12 +131,6 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
               </p>
             </div>
           </div>
-          
-          {tag.description && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {tag.description}
-            </p>
-          )}
         </div>
 
         {/* Posts Grid */}
@@ -118,10 +160,12 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
                           <span>•</span>
                         </>
                       )}
-                      <time dateTime={post.publishedAt} className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {formatDate(post.publishedAt)}
-                      </time>
+                      {post.publishedAt && (
+                        <time dateTime={new Date(post.publishedAt).toISOString()} className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {formatDate(post.publishedAt)}
+                        </time>
+                      )}
                     </div>
                     
                     <h3 className="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
