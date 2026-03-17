@@ -104,10 +104,30 @@ export default function AboutPage() {
 
           {/* Sidebar / Visual Column */}
           <div className="space-y-8">
-            <div className="relative aspect-square rounded-3xl overflow-hidden shadow-xl glass-morphism p-2">
-              <div className="absolute inset-0 bg-linear-to-br from-blue-600/10 to-purple-600/10 mix-blend-overlay" />
-              <div className="w-full h-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center rounded-2xl border border-white/20 dark:border-slate-800/50">
-                <Code className="w-16 h-16 text-slate-300 dark:text-slate-700 opacity-40" />
+            <div className="relative aspect-square rounded-3xl overflow-hidden shadow-xl glass-morphism p-2 group">
+              <div className="absolute inset-0 overflow-hidden">
+                <div 
+                  className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse" 
+                  style={{ animationDuration: '8s' }} 
+                />
+                <div 
+                  className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse" 
+                  style={{ animationDuration: '12s' }} 
+                />
+              </div>
+              
+              <div className="relative w-full h-full flex flex-col items-center justify-center text-center p-6 bg-white/40 dark:bg-slate-900/40 rounded-2xl border border-white/20 dark:border-slate-800/50 backdrop-blur-sm">
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 mb-3 group-hover:text-primary transition-colors">
+                  System Status
+                </div>
+                <div className="font-mono text-lg font-black tracking-tighter text-gradient group-hover:scale-110 transition-transform duration-500">
+                  MODERN_BLOG_v1.0
+                </div>
+                <div className="mt-4 flex gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500/40" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500/20" />
+                </div>
               </div>
             </div>
 

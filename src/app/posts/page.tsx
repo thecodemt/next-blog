@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, Clock, Search, Filter, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, Search, Filter, ArrowRight, BookOpen, Layers } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/date'
+import { PostCardSkeleton } from '@/components/post-card-skeleton'
 
 async function getPosts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
@@ -87,14 +88,18 @@ export default function PostsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center py-20">
-            <div className="animate-pulse">
-              <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-4"></div>
-              <div className="h-8 bg-muted rounded w-48 mx-auto mb-2"></div>
-              <div className="h-4 bg-muted rounded w-64 mx-auto"></div>
-            </div>
+      <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950/50">
+        <main className="container mx-auto px-4 py-12">
+          {/* Skeleton Header */}
+          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
+            <div className="h-12 w-64 bg-slate-200 dark:bg-slate-800 rounded-xl mx-auto animate-pulse" />
+            <div className="h-6 w-96 bg-slate-200 dark:bg-slate-800 rounded-lg mx-auto animate-pulse" />
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <PostCardSkeleton key={i} />
+            ))}
           </div>
         </main>
       </div>
@@ -102,36 +107,51 @@ export default function PostsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background relative selection:bg-primary/20">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-[20%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 right-[20%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
+      </div>
+
+      <main className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            所有文章
+        <div className="max-w-4xl mx-auto text-center mb-16 space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold tracking-wide uppercase">
+            <Layers className="w-4 h-4" />
+            <span>文章归档</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight bg-linear-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            探索所有文章
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            探索我的技术博客，涵盖前端、后端、设计等多个领域
+          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
+            涵盖前端开发、后端架构、UI/UX 设计以及技术趋势的深度探索。
           </p>
         </div>
 
-        {/* Search and Filter */}
-        <div className="mb-8 space-y-4">
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-            <Input
-              placeholder="搜索文章标题、内容..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 text-lg glass-morphism border-border/50 focus:border-primary"
-            />
+        {/* Search and Filter Section */}
+        <div className="max-w-5xl mx-auto mb-16 space-y-8">
+          <div className="relative group max-w-2xl mx-auto">
+            <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl group-hover:bg-primary/30 transition-all duration-500 opacity-50" />
+            <div className="relative flex items-center">
+              <Search className="absolute left-5 text-muted-foreground w-5 h-5 group-hover:text-primary transition-colors" />
+              <Input
+                placeholder="搜索文章标题、内容、摘要..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-14 h-14 text-lg bg-background/80 backdrop-blur-md border-slate-200/50 dark:border-slate-800/50 focus:ring-primary/20 focus:border-primary rounded-2xl shadow-xl transition-all"
+              />
+            </div>
           </div>
           
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-3 justify-center items-center">
             <Button
               variant={selectedCategory === 'all' ? 'default' : 'outline'}
-              size="sm"
               onClick={() => setSelectedCategory('all')}
-              className="rounded-full"
+              className={cn(
+                "rounded-full px-6 h-10 transition-all duration-300",
+                selectedCategory === 'all' ? "shadow-lg shadow-primary/25" : "hover:bg-primary/5"
+              )}
             >
               全部分类
             </Button>
@@ -139,12 +159,20 @@ export default function PostsPage() {
               <Button
                 key={category.id}
                 variant={selectedCategory === category.id ? 'default' : 'outline'}
-                size="sm"
                 onClick={() => setSelectedCategory(category.id)}
-                className="rounded-full"
+                className={cn(
+                  "rounded-full px-6 h-10 transition-all duration-300 group",
+                  selectedCategory === category.id ? "shadow-lg shadow-primary/25" : "hover:bg-primary/5"
+                )}
               >
                 {category.name}
-                <Badge variant="secondary" className="ml-2 px-2 py-0.5 text-xs">
+                <Badge 
+                  variant={selectedCategory === category.id ? 'secondary' : 'outline'} 
+                  className={cn(
+                    "ml-2 px-1.5 py-0 min-w-[20px] flex items-center justify-center text-[10px]",
+                    selectedCategory === category.id ? "bg-white/20 border-0" : "group-hover:bg-primary/10"
+                  )}
+                >
                   {category._count?.posts || 0}
                 </Badge>
               </Button>
@@ -156,55 +184,61 @@ export default function PostsPage() {
         {filteredPosts.length > 0 ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredPosts.map((post: any) => (
-              <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group">
-                <Card className="overflow-hidden border-border/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 glass-morphism">
+              <Link key={post.id} href={`/post/${post.slug || post.id}`} className="group h-full">
+                <Card className="h-full flex flex-col overflow-hidden border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 bg-card/50 backdrop-blur-sm group-hover:-translate-y-2">
                   {/* Cover Image */}
-                  {post.coverImage && (
-                    <div className="relative h-48 w-full overflow-hidden">
+                  <div className="relative h-56 w-full overflow-hidden">
+                    {post.coverImage ? (
                       <Image
                         src={post.coverImage}
                         alt={post.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="absolute inset-0 bg-linear-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
+                        <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-700" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {post.category && (
+                      <div className="absolute top-4 left-4">
+                        <Badge variant="secondary" className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-foreground border-0 shadow-sm px-3 py-1 font-semibold">
+                          {post.category.name}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
 
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      {post.category && (
-                        <>
-                          <span className="font-medium text-primary">
-                            {post.category.name}
-                          </span>
-                          <span>•</span>
-                        </>
-                      )}
-                      <time dateTime={post.publishedAt} className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
+                  <CardHeader className="space-y-3 pt-6">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-primary/70" />
                         {formatDate(post.publishedAt)}
-                      </time>
+                      </div>
+                      <span className="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full" />
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-primary/70" />
+                        <span>{post.readTime || 5} min read</span>
+                      </div>
                     </div>
                     
-                    <h3 className="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors leading-tight line-clamp-2">
                       {post.title}
                     </h3>
                   </CardHeader>
 
-                  <CardContent className="pt-0">
+                  <CardContent className="flex-grow flex flex-col justify-between">
                     {post.excerpt && (
-                      <p className="text-muted-foreground text-sm line-clamp-3 mb-4 leading-relaxed">
+                      <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6">
                         {post.excerpt}
                       </p>
                     )}
                     
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{post.readTime || 5} 分钟</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
+                    <div className="flex items-center text-primary font-semibold text-sm group-hover:gap-2 transition-all">
+                      阅读全文
+                      <ArrowRight className="w-4 h-4 ml-1 transition-all" />
                     </div>
                   </CardContent>
                 </Card>
@@ -212,31 +246,38 @@ export default function PostsPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-xl font-semibold mb-2">没有找到文章</h3>
-              <p className="text-muted-foreground mb-6">
-                {searchTerm || selectedCategory !== 'all' 
-                  ? '尝试调整搜索词或筛选条件' 
-                  : '还没有发布任何文章'
-                }
-              </p>
-              {(searchTerm || selectedCategory !== 'all') && (
-                <Button onClick={() => { setSearchTerm(''); setSelectedCategory('all') }}>
-                  清除筛选
-                </Button>
-              )}
+          <div className="max-w-2xl mx-auto text-center py-24 px-4 bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+            <div className="relative inline-block mb-6">
+              <Search className="w-20 h-20 text-muted-foreground/20" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Search className="w-10 h-10 text-muted-foreground" />
+              </div>
             </div>
+            <h3 className="text-2xl font-bold mb-3">未找到相关文章</h3>
+            <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto leading-relaxed">
+              {searchTerm || selectedCategory !== 'all' 
+                ? `抱歉，我们没有找到与 "${searchTerm || categories.find(c => c.id === selectedCategory)?.name}" 相关的结果。` 
+                : '目前还没有发布任何文章，请稍后再来。'
+              }
+            </p>
+            {(searchTerm || selectedCategory !== 'all') && (
+              <Button 
+                onClick={() => { setSearchTerm(''); setSelectedCategory('all') }}
+                className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20"
+              >
+                重置搜索与筛选
+              </Button>
+            )}
           </div>
         )}
 
-        {/* Results Count */}
+        {/* Results Info Footer */}
         {filteredPosts.length > 0 && (
-          <div className="text-center mt-12 text-muted-foreground">
-            找到 {filteredPosts.length} 篇文章
-            {searchTerm && ` 关于 "${searchTerm}"`}
-            {selectedCategory !== 'all' && ` 在 ${categories.find(c => c.id === selectedCategory)?.name} 分类中`}
+          <div className="mt-20 flex flex-col items-center gap-4">
+            <div className="h-px w-24 bg-slate-200 dark:bg-slate-800" />
+            <p className="text-muted-foreground font-medium italic">
+              — 共找到 {filteredPosts.length} 篇文章 —
+            </p>
           </div>
         )}
       </main>
