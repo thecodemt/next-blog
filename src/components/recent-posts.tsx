@@ -25,16 +25,16 @@ export function RecentPosts({ posts }: RecentPostsProps) {
   if (!posts.length) return null
 
   return (
-    <section className="py-16">
+    <section className="py-12">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">最近更新</h2>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-4">最近更新</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             按时间排序的最新文章，保持知识更新
           </p>
         </div>
 
-        <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+        <Card className="bg-linear-to-br from-white/60 via-white/40 to-white/20 backdrop-blur-lg border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300">
           <CardContent className="p-0">
             <div className="divide-y divide-white/10">
               {posts.map((post, index) => (
@@ -42,12 +42,12 @@ export function RecentPosts({ posts }: RecentPostsProps) {
                   key={post.id}
                   href={`/post/${post.slug || post.id}`}
                   className={cn(
-                    'flex items-center justify-between p-6 hover:bg-accent/50 transition-colors group',
+                    'flex items-center justify-between p-4 hover:bg-accent/30 transition-all duration-300 group border-b border-white/10 last:border-b-0 hover:border-primary/20',
                     index === 0 && 'border-t-0'
                   )}
                 >
                   <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="text-lg font-medium line-clamp-1 group-hover:text-primary transition-colors mb-2">
+                    <h3 className="text-base font-medium line-clamp-1 group-hover:text-primary transition-colors mb-2 group-hover:translate-x-1 duration-200">
                       {post.title}
                     </h3>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -68,7 +68,7 @@ export function RecentPosts({ posts }: RecentPostsProps) {
                     </div>
                   </div>
                   
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 shrink-0" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-2 transition-all duration-300 shrink-0" />
                 </Link>
               ))}
             </div>

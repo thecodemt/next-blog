@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-12 md:py-20">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,theme(colors.primary)/10,transparent_50%)]" />
@@ -33,21 +33,21 @@ export function HeroSection() {
               <Sparkles className="w-3 h-3 mr-1" />
               Full-Stack Developer & Content Creator
             </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               <span className="block mb-2">
                 构建数字世界的
                 <span className="block bg-linear-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
                   工匠
                 </span>
               </span>
-              <span className="text-2xl md:text-3xl lg:text-4xl text-muted-foreground font-normal">
+              <span className="text-xl md:text-2xl lg:text-3xl text-muted-foreground font-normal">
                 分享技术与生活
               </span>
             </h1>
           </div>
 
           {/* Description */}
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
             专注于现代 Web 开发，热衷于探索前沿技术，通过写作分享实践经验。
             从 React 到 Rust，从前端到后端，构建优雅的数字解决方案。
           </p>
@@ -64,7 +64,7 @@ export function HeroSection() {
           </div>
 
           {/* Current Status */}
-          <div className="mt-12 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+          <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2 bg-muted/50 px-3 py-1 rounded-full">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               正在开发新项目

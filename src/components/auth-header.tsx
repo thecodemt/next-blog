@@ -9,29 +9,29 @@ export function AuthHeader() {
   const { data: session, status } = useSession()
 
   if (status === 'loading') {
-    return <div className="flex items-center space-x-4">Loading...</div>
+    return <div className="flex items-center space-x-3">加载中...</div>
   }
 
   if (!session) {
     return (
-      <nav className="flex items-center space-x-4">
+      <nav className="flex items-center space-x-3">
         <Link href="/auth/signin">
-          <Button variant="outline">Sign In</Button>
+          <Button variant="outline" size="sm">登录</Button>
         </Link>
         <Link href="/auth/signup">
-          <Button>Sign Up</Button>
+          <Button size="sm">注册</Button>
         </Link>
       </nav>
     )
   }
 
   return (
-    <nav className="flex items-center space-x-4">
+    <nav className="flex items-center space-x-3">
       {session.user.role === 'ADMIN' && (
         <Link href="/admin">
-          <Button variant="outline">
+          <Button variant="outline" size="sm">
             <Settings className="w-4 h-4 mr-2" />
-            Admin
+            管理
           </Button>
         </Link>
       )}
@@ -40,10 +40,10 @@ export function AuthHeader() {
           <img
             src={session.user.image}
             alt={session.user.name || ''}
-            className="w-8 h-8 rounded-full"
+            className="w-7 h-7 rounded-full"
           />
         )}
-        <span className="text-sm font-medium">{session.user.name}</span>
+        <span className="text-sm font-medium hidden lg:block">{session.user.name}</span>
       </div>
       <Button
         variant="outline"
@@ -51,7 +51,8 @@ export function AuthHeader() {
         onClick={() => signOut()}
       >
         <LogOut className="w-4 h-4 mr-2" />
-        Sign Out
+        <span className="hidden sm:block">退出</span>
+        <span className="sm:hidden">退出</span>
       </Button>
     </nav>
   )

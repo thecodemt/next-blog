@@ -43,10 +43,10 @@ export function CategoryTags({ categories }: CategoryTagsProps) {
   }
 
   return (
-    <section className="py-16">
+    <section className="py-12">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">知识体系</h2>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-4">知识体系</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             探索不同领域的知识版块，从技术深度到生活广度
           </p>

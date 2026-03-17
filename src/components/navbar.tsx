@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { ClientOnly } from '@/components/client-only'
+import { AuthHeader } from '@/components/auth-header'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -73,8 +74,12 @@ export function Navbar() {
             })}
           </div>
 
-          {/* Theme Toggle & Mobile Menu */}
+          {/* Auth Section & Theme Toggle & Mobile Menu */}
           <div className="flex items-center space-x-4">
+            {/* Auth Section - Desktop Only */}
+            <div className="hidden md:block">
+              <AuthHeader />
+            </div>
             {/* Theme Toggle */}
             <ClientOnly fallback={<div className="h-9 w-9" />}>
               <Button
@@ -127,6 +132,12 @@ export function Navbar() {
                   </a>
                 )
               })}
+              {/* Mobile Auth Section */}
+              <div className="border-t border-slate-200/50 dark:border-slate-700/50 mt-2 pt-2">
+                <div className="px-3 py-2">
+                  <AuthHeader />
+                </div>
+              </div>
             </div>
           </div>
         )}

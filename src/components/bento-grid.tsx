@@ -40,11 +40,11 @@ export function BentoGrid({ postsCount, categoriesCount }: BentoGridProps) {
   ]
 
   return (
-    <section className="py-16">
+    <section className="py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">状态概览</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">状态概览</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-min">
           
           {/* Tech Stack Card */}
           <Card className="md:col-span-6 bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-300">
