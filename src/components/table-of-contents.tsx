@@ -49,7 +49,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
   return (
     <Card className="bg-linear-to-br from-white/90 via-white/70 to-white/50 backdrop-blur-lg border-white/20 shadow-xl">
       <CardHeader className="pb-3">
-        <h3 className="font-semibold flex items-center gap-2">
+        <h3 className="font-bold text-base flex items-center gap-2">
           <List className="w-4 h-4 text-primary" />
           目录
         </h3>
@@ -63,7 +63,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
               className={`
                 block w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200
                 hover:bg-primary/10 hover:text-primary hover:translate-x-1
-                ${heading.level === 1 ? 'font-semibold' : ''}
+                ${heading.level === 1 ? 'font-bold' : ''}
                 ${heading.level === 2 ? 'pl-6' : ''}
                 ${heading.level === 3 ? 'pl-9 text-xs' : ''}
                 ${heading.level >= 4 ? 'pl-12 text-xs' : ''}

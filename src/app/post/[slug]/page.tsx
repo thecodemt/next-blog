@@ -216,7 +216,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     <div className="min-h-screen bg-linear-to-b from-background via-background/95 to-background">
       <ReadingProgress />
 
-      <div className="container mx-auto px-4 py-6 lg:py-10">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-6 lg:py-10">
         {/* Navigation Breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <Link 
@@ -235,8 +235,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-10">
-          <main className="xl:col-span-8 space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-12">
+          <main className="xl:col-span-9 space-y-8">
             <article className="glass-morphism rounded-4xl overflow-hidden shadow-2xl border border-border/50 bg-card/30 backdrop-blur-md">
               <header className="relative p-6 md:p-10 lg:p-12">
                 <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-secondary/10 opacity-30 rounded-t-4xl" />
@@ -423,15 +423,15 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </div>
           </main>
 
-          <aside className="xl:col-span-4 space-y-6">
+          <aside className="xl:col-span-3 space-y-6">
             <div className="sticky top-20 space-y-6">
               <TableOfContents content={post.content} />
               
               {/* Author Card in Sidebar */}
               <Card className="rounded-3xl overflow-hidden border-border/50 shadow-xl bg-card/30 backdrop-blur-md">
                 <div className="h-20 bg-linear-to-br from-primary/20 to-secondary/20" />
-                <CardContent className="relative pt-0 px-5 pb-6">
-                  <div className="flex flex-col items-center -mt-10 text-center space-y-3">
+                <CardContent className="relative pt-0 px-6 pb-6">
+                  <div className="flex flex-col items-center -mt-10 text-center space-y-4">
                     {post.author.image && (
                       <div className="relative w-20 h-20 ring-4 ring-background rounded-full shadow-xl overflow-hidden">
                         <Image
@@ -442,18 +442,18 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                         />
                       </div>
                     )}
-                    <div className="space-y-0.5">
-                      <h4 className="font-bold text-base">{post.author.name}</h4>
-                      <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">本文作者</p>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-lg">{post.author.name}</h4>
+                      <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">本文作者</p>
                     </div>
                     {post.author.bio && (
-                      <p className="text-[11px] text-muted-foreground leading-relaxed font-medium italic">
+                      <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
                         "{post.author.bio}"
                       </p>
                     )}
-                    <div className="pt-3 flex gap-2 w-full">
-                      <Button size="sm" className="flex-1 h-8 rounded-full font-bold shadow-lg shadow-primary/20 text-xs">关注作者</Button>
-                      <Button size="sm" variant="outline" className="h-8 rounded-full font-bold text-xs">主页</Button>
+                    <div className="pt-4 flex gap-3 w-full">
+                      <Button size="sm" className="flex-1 h-10 rounded-full font-bold shadow-lg shadow-primary/20 text-sm">关注作者</Button>
+                      <Button size="sm" variant="outline" className="h-10 rounded-full font-bold text-sm">主页</Button>
                     </div>
                   </div>
                 </CardContent>
