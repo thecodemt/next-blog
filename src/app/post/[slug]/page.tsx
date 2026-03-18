@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { Calendar, Eye, MessageCircle, Heart, BookOpen, Share2, ArrowLeft } from 'lucide-react'
+import { Calendar, Eye, MessageCircle, Heart, BookOpen } from 'lucide-react'
 import { MarkdownContent } from '@/components/markdown-content'
 import { formatDate } from '@/lib/date'
 import TableOfContents from '@/components/table-of-contents'
@@ -10,6 +10,7 @@ import BackToTop from '@/components/back-to-top'
 import { RelatedPosts } from '@/components/related-posts'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { ShareButton } from '@/components/share-button'
 
 import { prisma } from '@/lib/prisma'
 
@@ -218,21 +219,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
       <div className="max-w-6xl mx-auto px-6 lg:px-8 py-6 lg:py-10">
         {/* Navigation Breadcrumb */}
-        <div className="mb-6 flex items-center justify-between">
-          <Link 
-            href="/posts" 
-            className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </div>
-            返回文章列表
-          </Link>
-          
-          <Button variant="ghost" size="sm" className="h-8 rounded-full gap-2 text-muted-foreground text-xs">
-            <Share2 className="w-3.5 h-3.5" />
-            分享
-          </Button>
+        <div className="mb-6 flex items-center justify-end">
+          <ShareButton />
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-12">
@@ -246,7 +234,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     {post.category && (
                       <Link
                         href={`/category/${post.category.slug}`}
-                        className="inline-flex items-center px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-[10px] font-bold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20"
+                        className="inline-flex items-center px-4 py-1.5 bg-primary text-primary-foreground rounded-full text-sm font-bold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20"
                       >
                         {post.category.name}
                       </Link>
@@ -294,25 +282,25 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     
                     <div className="flex items-center gap-3 px-4 py-2 bg-muted/20 rounded-xl border border-border/20 backdrop-blur-sm">
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">浏览</span>
-                        <div className="flex items-center gap-1 text-xs font-bold">
-                          <Eye className="w-3 h-3 text-primary" />
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">浏览</span>
+                        <div className="flex items-center gap-1 text-sm font-bold">
+                          <Eye className="w-3.5 h-3.5 text-primary" />
                           <span>{post.views || 0}</span>
                         </div>
                       </div>
                       <div className="w-px h-5 bg-border/50" />
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">评论</span>
-                        <div className="flex items-center gap-1 text-xs font-bold">
-                          <MessageCircle className="w-3 h-3 text-primary" />
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">评论</span>
+                        <div className="flex items-center gap-1 text-sm font-bold">
+                          <MessageCircle className="w-3.5 h-3.5 text-primary" />
                           <span>{post._count.comments}</span>
                         </div>
                       </div>
                       <div className="w-px h-5 bg-border/50" />
                       <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">阅读</span>
-                        <div className="flex items-center gap-1 text-xs font-bold">
-                          <BookOpen className="w-3 h-3 text-primary" />
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">阅读</span>
+                        <div className="flex items-center gap-1 text-sm font-bold">
+                          <BookOpen className="w-3.5 h-3.5 text-primary" />
                           <span>{Math.ceil(post.content.length / 500)}m</span>
                         </div>
                       </div>

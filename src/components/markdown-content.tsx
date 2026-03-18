@@ -3,15 +3,11 @@
 import React, { useState, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeHighlight from 'rehype-highlight'
-import rehypeSlug from 'rehype-slug'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import 'highlight.js/styles/github-dark.css'
-import 'katex/dist/katex.min.css'
 
 interface MarkdownContentProps {
   content: string
@@ -19,8 +15,9 @@ interface MarkdownContentProps {
 }
 
 /**
- * 简化后的 Markdown 内容渲染组件
- * 提取了复杂的渲染逻辑，使主组件更清晰
+ * 安全的 Markdown 内容渲染组件
+ * 使用 react-markdown + react-syntax-highlighter 技术栈
+ * 天然防御 XSS 攻击，符合 React 渲染模式
  */
 export function MarkdownContent({ content, className }: MarkdownContentProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
@@ -60,63 +57,100 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
       li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
       
       // 引用
-    blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-primary/50 bg-linear-to-r from-primary/5 to-transparent pl-6 py-4 my-6 text-muted-foreground italic rounded-r-lg">
-        {children}
-      </blockquote>
-    ),
-    
-    // 代码块逻辑
-    pre: ({ children }: any) => <>{children}</>,
-    code: ({ children, className }: any) => {
-      // 提取纯文本内容
-      const getRawText = (nodes: any): string => {
-        if (typeof nodes === 'string') return nodes
-        if (Array.isArray(nodes)) return nodes.map(getRawText).join('')
-        if (nodes?.props?.children) return getRawText(nodes.props.children)
-        return ''
-      }
+      blockquote: ({ children }: any) => (
+        <blockquote className="border-l-4 border-primary/50 bg-linear-to-r from-primary/5 to-transparent pl-6 py-4 my-6 text-muted-foreground italic rounded-r-lg">
+          {children}
+        </blockquote>
+      ),
       
-      const codeString = getRawText(children)
-      
-      // 改进的块级代码判断逻辑：
-      // 1. 含有 hljs 或 language- 类名 (有注明语言或已被插件识别)
-      // 2. 含有换行符 (Markdown 规范中，被三引号包裹的代码块通常会保留换行符，而行内代码不会)
-      const isBlock = className?.includes('hljs') || 
-                      className?.includes('language-') || 
-                      codeString.includes('\n')
-      
-      if (!isBlock) {
+      // 代码块 - 使用 react-syntax-highlighter
+      pre: ({ children }: any) => <>{children}</>,
+      code({ node, inline, className, children, ...props }: any) {
+        const match = /language-(\w+)/.exec(className || '')
+        const language = match ? match[1] : ''
+        const codeString = String(children).replace(/\n$/, '')
+        const isCopied = copiedCode === codeString
+
+        if (!inline && language) {
+          return (
+            <div className="relative group my-6 bg-slate-950 rounded-xl overflow-hidden border border-slate-800/50 shadow-lg">
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => copyToClipboard(codeString)}
+                  className="h-7 px-2 text-[10px] gap-1.5 shadow-md backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white border-white/10"
+                >
+                  {isCopied ? <><Check className="w-3 h-3" /> 已复制</> : <><Copy className="w-3 h-3" /> 复制</>}
+                </Button>
+              </div>
+              <SyntaxHighlighter
+                style={{
+                  // 只保留oneDark的颜色方案，移除所有背景相关样式
+                  ...Object.fromEntries(
+                    Object.entries(oneDark).filter(([key, value]) => {
+                      // 保留颜色相关的样式，但排除背景
+                      if (typeof value === 'object' && value !== null) {
+                        return !key.includes('pre') && !key.includes('code')
+                      }
+                      return true
+                    })
+                  ),
+                  'pre[class*="language-"]': {
+                    color: oneDark['pre[class*="language-"]']?.color || '#d4d4d4',
+                    margin: 0,
+                    background: 'transparent',
+                    backgroundColor: 'transparent',
+                    fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    overflow: 'auto',
+                  },
+                  'code[class*="language-"]': {
+                    color: 'inherit',
+                    background: 'transparent',
+                    backgroundColor: 'transparent',
+                    fontFamily: 'inherit',
+                    fontSize: 'inherit',
+                  },
+                  // 保留语法高亮颜色
+                  ...Object.fromEntries(
+                    Object.entries(oneDark).filter(([key]) => 
+                      key.includes('.token') || 
+                      key.includes('.keyword') || 
+                      key.includes('.string') || 
+                      key.includes('.comment') || 
+                      key.includes('.function') ||
+                      key.includes('.number') ||
+                      key.includes('.operator') ||
+                      key.includes('.class')
+                    )
+                  ),
+                }}
+                language={language}
+                PreTag="div"
+                className="text-[14px] leading-relaxed"
+                customStyle={{
+                  background: 'transparent',
+                  backgroundColor: 'transparent',
+                  padding: '1rem',
+                  margin: 0,
+                }}
+                {...props}
+              >
+                {codeString}
+              </SyntaxHighlighter>
+            </div>
+          )
+        }
+
+        // 行内代码
         return (
-          <code className="bg-muted px-1.5 py-0.5 rounded text-[0.85em] font-mono border border-border/40 text-foreground">
+          <code className="bg-muted px-1.5 py-0.5 rounded text-[0.85em] font-mono border border-border/40 text-foreground" {...props}>
             {children}
           </code>
         )
-      }
-      
-      const cleanCodeString = codeString.replace(/\n$/, '')
-      const isCopied = copiedCode === cleanCodeString
-      
-      return (
-        <div className="relative group my-6">
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => copyToClipboard(cleanCodeString)}
-              className="h-7 px-2 text-[10px] gap-1.5 shadow-md backdrop-blur-sm bg-secondary/90 hover:bg-secondary"
-            >
-              {isCopied ? <><Check className="w-3 h-3" /> 已复制</> : <><Copy className="w-3 h-3" /> 复制</>}
-            </Button>
-          </div>
-          <pre className="relative rounded-xl overflow-hidden border border-border/20 bg-slate-950 shadow-lg z-10">
-            <code className={cn("hljs block overflow-x-auto p-4 text-[13px] leading-relaxed relative z-20 whitespace-pre", className)}>
-              {children}
-            </code>
-          </pre>
-        </div>
-      )
-    },
+      },
       
       // 链接与图片
       a: ({ href, children }: any) => {
@@ -170,8 +204,7 @@ export function MarkdownContent({ content, className }: MarkdownContentProps) {
   return (
     <div className={cn("prose prose-base md:prose-lg max-w-none dark:prose-invert", className)}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeSlug, rehypeHighlight, rehypeKatex]}
+        remarkPlugins={[remarkGfm]}
         components={components as any}
       >
         {content}
