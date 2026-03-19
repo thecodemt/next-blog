@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { Clock, ArrowRight } from 'lucide-react'
+import { Clock, ArrowRight, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useState, useEffect } from 'react'
 
 interface Post {
   id: string
@@ -18,13 +19,81 @@ interface LatestPostsProps {
   posts: Post[]
 }
 
-export function LatestPosts({ posts }: LatestPostsProps) {
+export function LatestPosts({ posts: initialPosts }: LatestPostsProps) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState(new Date())
+
+  // 手动刷新功能
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    try {
+      const response = await fetch('/api/posts/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success) {
+          setPosts(result.data)
+          setLastUpdate(new Date())
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing posts:', error)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  // 监听页面可见性变化
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleRefresh()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
+  // 定期自动刷新（每5分钟）
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleRefresh()
+    }, 5 * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <section className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-          最新文章
-        </h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+            最新文章
+          </h2>
+          <span className="text-xs text-slate-400 dark:text-slate-600">
+            更新于: {lastUpdate.toLocaleTimeString()}
+          </span>
+        </div>
+        
+        <button
+          onClick={handleRefresh}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg",
+            "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700",
+            "transition-colors duration-200"
+          )}
+          disabled={isRefreshing}
+        >
+          <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
+          刷新
+        </button>
       </div>
 
       <div className="space-y-2">
