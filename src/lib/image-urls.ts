@@ -4,6 +4,16 @@ export const SUPABASE_IMAGE_URLS = [
   'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-10se.jpg',
   'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-11se.jpg',
   'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-9se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/taejune-kim-ff7r-aerith.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/taejune-kim-sea.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/taejune-kim-vanessa-1600-mark.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-18see.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-1se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-4se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-5se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-7se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-8se.jpg',
+  'https://pzrnaocjecyrbpabdbiy.supabase.co/storage/v1/object/public/next-blog/wlop-9se.jpg',
   // ... 添加更多图片URL
 ]
 
