@@ -5,25 +5,25 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: '关于 | Modern Blog',
-  description: '了解更多关于 Modern Blog 的信息，以及它背后的技术栈和愿景。',
+  title: '关于我 | 个人博客',
+  description: '了解更多关于我的故事、技术热情和博客创作历程。',
 }
 
 export default function AboutPage() {
-  const stats = [
-    { label: '项目启动', value: '2024', icon: Rocket },
-    { label: '技术栈', value: 'Next.js 15', icon: Code },
-    { label: '全球用户', value: '10k+', icon: Globe },
-    { label: '开源精神', value: '100%', icon: Heart },
+  const personalStats = [
+    { label: '博客文章', value: '50+', icon: Code },
+    { label: '代码提交', value: '1.2k+', icon: Github },
+    { label: '咖啡因', value: '∞', icon: Coffee },
+    { label: '热爱度', value: '100%', icon: Heart },
   ]
 
-  const technologies = [
-    { name: 'Next.js 15', description: 'React 框架，提供极速的 SSR 和静态生成体验。' },
-    { name: 'TypeScript', description: '类型安全，提升代码质量。' },
-    { name: 'Tailwind CSS v4', description: '现代化的原子类 CSS 框架。' },
-    { name: 'Prisma & PG', description: '可靠的数据持久化方案。' },
-    { name: 'NextAuth.js', description: '灵活的身份验证系统。' },
-    { name: 'Lucide Icons', description: '美观且一致的图标库。' },
+  const interests = [
+    { name: '前端开发', description: 'React、Next.js、TypeScript，构建优雅的用户界面' },
+    { name: '全栈架构', description: '探索现代Web应用的完整解决方案' },
+    { name: '开源贡献', description: '相信分享的力量，参与开源社区建设' },
+    { name: '技术写作', description: '将复杂的技术概念用简单的方式表达' },
+    { name: '用户体验', description: '追求极致的用户体验和界面设计' },
+    { name: '持续学习', description: '保持好奇心，永远在学习的路上' },
   ]
 
   return (
@@ -32,15 +32,15 @@ export default function AboutPage() {
         {/* Header Section - Integrated Hero & Stats */}
         <section className="pt-12 pb-16 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-gradient">
-            关于 Modern Blog
+            关于我
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-12">
-            致力于分享高质量技术洞见和生活思考的现代化博客。
-            通过优秀的设计与前沿技术，产生最纯粹的内容表达。
+            热爱技术、喜欢分享的全栈开发者。
+            在这里记录学习历程、分享技术见解，希望能帮助到更多同行者。
           </p>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat) => {
+            {personalStats.map((stat) => {
               const Icon = stat.icon
               return (
                 <div key={stat.label} className="glass-morphism p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
@@ -65,23 +65,27 @@ export default function AboutPage() {
             <section className="space-y-6">
               <h2 className="text-2xl font-bold flex items-center gap-3">
                 <span className="w-1.5 h-6 bg-primary rounded-full" />
-                我们的故事
+                我的故事
               </h2>
               <div className="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400">
                 <p>
-                  Modern Blog 诞生于一个简单的想法：<strong>构建一个既美观又实用的全栈博客系统</strong>。
-                  在信息爆炸的时代，内容创作者需要纯净的高效空间，读者则需要流畅的无干扰环境。
+                  你好！我是一名<strong>热爱技术的全栈开发者</strong>。
+                  从前端到后端，从设计到部署，我喜欢探索技术的每一个角落。
                 </p>
                 <p>
-                  我们不满足于现状，持续探索 Web 技术的边界。从响应式布局到 Server Components，
-                  始终坚持使用最新的技术栈驱动每一次点击。
+                  这个博客是我记录学习、分享思考的地方。我相信<strong>知识分享的力量</strong>，
+                  希望通过文字帮助更多人成长，也在这里记录自己的技术成长轨迹。
+                </p>
+                <p>
+                  当不写代码的时候，你可能会发现我在喝咖啡、阅读技术书籍，
+                  或者参与开源项目的讨论。永远保持好奇心，永远在学习的路上。
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button size="sm" className="rounded-full px-6">加入我们</Button>
+                <Button size="sm" className="rounded-full px-6">阅读博客</Button>
                 <Button size="sm" variant="outline" className="rounded-full group">
-                  <Coffee className="w-3.5 h-3.5 mr-2 group-hover:text-amber-600" />
-                  请喝咖啡
+                  <Mail className="w-3.5 h-3.5 mr-2 group-hover:text-rose-600" />
+                  联系我
                 </Button>
               </div>
             </section>
@@ -89,13 +93,13 @@ export default function AboutPage() {
             <section className="space-y-6">
               <h2 className="text-2xl font-bold flex items-center gap-3">
                 <span className="w-1.5 h-6 bg-primary rounded-full" />
-                技术驱动核心
+                技术兴趣
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-                {technologies.map((tech) => (
-                  <div key={tech.name} className="group border-l-2 border-slate-100 dark:border-slate-800 pl-4 hover:border-primary transition-colors">
-                    <h3 className="font-bold text-base mb-1 group-hover:text-primary">{tech.name}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{tech.description}</p>
+                {interests.map((interest) => (
+                  <div key={interest.name} className="group border-l-2 border-slate-100 dark:border-slate-800 pl-4 hover:border-primary transition-colors">
+                    <h3 className="font-bold text-base mb-1 group-hover:text-primary">{interest.name}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{interest.description}</p>
                   </div>
                 ))}
               </div>
@@ -118,23 +122,26 @@ export default function AboutPage() {
               
               <div className="relative w-full h-full flex flex-col items-center justify-center text-center p-6 bg-white/40 dark:bg-slate-900/40 rounded-2xl border border-white/20 dark:border-slate-800/50 backdrop-blur-sm">
                 <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 mb-3 group-hover:text-primary transition-colors">
-                  System Status
+                  Developer Status
                 </div>
                 <div className="font-mono text-lg font-black tracking-tighter text-gradient group-hover:scale-110 transition-transform duration-500">
-                  MODERN_BLOG_v1.0
+                  CODING_BLOG_v2.0
                 </div>
                 <div className="mt-4 flex gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500/40" />
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500/20" />
                 </div>
+                <div className="mt-4 text-xs text-muted-foreground">
+                  🚀 正在构建下一个项目
+                </div>
               </div>
             </div>
 
             <section className="glass-morphism rounded-3xl p-6 shadow-lg border border-white/20 dark:border-slate-800/50">
-              <h3 className="font-bold text-lg mb-4">保持联系</h3>
+              <h3 className="font-bold text-lg mb-4">与我联系</h3>
               <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                欢迎提供建议、探讨合作或简单打个招呼。
+                欢迎交流技术、分享想法，或者只是打个招呼！
               </p>
               <div className="space-y-3">
                 <Button variant="outline" className="w-full justify-start rounded-xl h-10 px-4 text-sm group">

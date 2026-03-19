@@ -41,7 +41,7 @@ export function Navbar() {
       className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
         scrolled
-          ? 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm'
+          ? 'bg-background/75 backdrop-blur-xl border-b border-border/60 shadow-sm'
           : 'bg-transparent border-b border-transparent'
       )}
     >
@@ -98,14 +98,14 @@ export function Navbar() {
               <AuthHeader />
             </div>
 
-            <div className="flex items-center space-x-1 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+            <div className="flex items-center space-x-1 bg-muted/40 p-1 rounded-xl border border-border/60">
               {/* Theme Toggle */}
               <ClientOnly fallback={<div className="h-8 w-8" />}>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="h-8 w-8 rounded-lg hover:bg-white dark:hover:bg-slate-700 shadow-xs transition-all duration-200"
+                  className="h-8 w-8 rounded-lg hover:bg-background shadow-xs transition-all duration-200"
                   aria-label="切换主题"
                 >
                   {theme === 'dark' ? (
@@ -120,7 +120,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden h-8 w-8 rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-all duration-200"
+                className="md:hidden h-8 w-8 rounded-lg hover:bg-background transition-all duration-200"
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label={isOpen ? "关闭菜单" : "打开菜单"}
               >
@@ -133,7 +133,7 @@ export function Navbar() {
         {/* Mobile Navigation */}
         <div className={cn(
           "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-[400px] opacity-100 border-t border-slate-200/50 dark:border-slate-800/50" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[400px] opacity-100 border-t border-border/60" : "max-h-0 opacity-0"
         )}>
           <div className="px-2 pt-4 pb-6 space-y-2">
             {navigation.map((item) => {

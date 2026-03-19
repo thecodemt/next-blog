@@ -53,12 +53,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet" />
       </head>
       <body
-        className="font-sans antialiased"
+        className="font-sans antialiased min-h-dvh flex flex-col"
         suppressHydrationWarning
       >
         <Providers>
           <Navbar />
-          <main className="min-h-[calc(100vh-64px)]">
+          <main className="flex-1">
             {children}
           </main>
           <Footer />
