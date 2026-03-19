@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/date'
 import { getRandomImageForPost } from '@/lib/image-urls'
-import { BackToTopButton } from '@/components/back-to-top-button'
+import BackToTop from '@/components/back-to-top'
 
 import { prisma } from '@/lib/prisma'
 
@@ -310,7 +310,7 @@ export default async function TagPage({ params }: { params: Promise<{ slug: stri
         )}
 
         {/* Back to Top */}
-        <BackToTopButton />
+        <BackToTop />
       </main>
     </div>
   )
